@@ -21,7 +21,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-zinc-500">
+      <div className="flex items-center justify-center min-h-screen text-text-muted">
         Loading...
       </div>
     );
@@ -47,15 +47,15 @@ export default function Home() {
   };
 
   return (
-    <div className="flex w-full h-screen overflow-x-hidden">
+    <div className="flex w-full h-screen overflow-x-hidden bg-surface">
       <Agentation />
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       {activeTab !== "preview" && (
-        <main className="flex-1 overflow-y-auto bg-zinc-50">
+        <main className="flex-1 overflow-y-auto">
           {renderContent()}
         </main>
       )}
-      <aside className={`${activeTab === "preview" ? "flex-1 min-w-0" : "w-[calc(210mm+3rem)] shrink-0"} overflow-auto border-l border-zinc-200 bg-white`}>
+      <aside className={`${activeTab === "preview" ? "flex-1 min-w-0" : "w-[calc(210mm+3rem)] shrink-0"} overflow-auto bg-surface-raised`}>
         <CVPreview />
       </aside>
     </div>

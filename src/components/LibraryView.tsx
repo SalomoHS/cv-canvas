@@ -55,32 +55,34 @@ function SortableEntry({ entry, section }: { entry: Entry; section: SectionType 
     switch (entry.section) {
       case "education": {
         const d = entry.data as { institution: string; degree: string; period: string };
-        return <span className="text-sm">{d.institution} — {d.degree} ({d.period})</span>;
+        return <span className="text-sm"><strong className="font-medium text-text-primary">{d.institution}</strong><span className="text-text-muted mx-1">—</span>{d.degree}<span className="text-text-muted ml-1">({d.period})</span></span>;
       }
       case "experience": {
         const d = entry.data as { role: string; organization: string; period: string };
-        const subLabel = (entry.subType ?? "professional") === "professional" ? "Professional" : "Organizational";
-        return <span className="text-sm">[{subLabel}] {d.role} @ {d.organization} ({d.period})</span>;
+        const subLabel = (entry.subType ?? "professional") === "professional" ? "Prof" : "Org";
+        return <span className="text-sm"><span className="text-[10px] font-semibold tracking-wide uppercase text-text-muted mr-1.5">[{subLabel}]</span><strong className="font-medium text-text-primary">{d.role}</strong><span className="text-text-muted"> @ {d.organization}</span><span className="text-text-muted ml-1">({d.period})</span></span>;
       }
       case "project": {
         const d = entry.data as { name: string; year: string };
-        return <span className="text-sm">{d.name} ({d.year})</span>;
+        return <span className="text-sm"><strong className="font-medium text-text-primary">{d.name}</strong><span className="text-text-muted ml-1">({d.year})</span></span>;
       }
       case "skill": {
         const d = entry.data as { category: string; items: string[] };
-        return <span className="text-sm">{d.category}: {d.items.join(", ")}</span>;
+        return <span className="text-sm"><strong className="font-medium text-text-primary">{d.category}:</strong><span className="text-text-secondary ml-1">{d.items.join(", ")}</span></span>;
       }
     }
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`flex items-center gap-2 p-2 rounded border ${isInVersion ? "bg-green-50 border-green-300" : "bg-zinc-50 border-zinc-200"}`}>
-      <button {...attributes} {...listeners} className="cursor-grab text-zinc-400 hover:text-zinc-600 text-sm">⠿</button>
+    <div ref={setNodeRef} style={style} className={`flex items-center gap-2 p-2.5 rounded-lg border transition-all ${isInVersion ? "bg-success-bg border-success/30" : "bg-surface-alt/70 border-border"}`}>
+      <button {...attributes} {...listeners} className="cursor-grab text-text-muted hover:text-text-secondary text-sm px-1">⠿</button>
       <div className="flex-1 min-w-0">{renderData()}</div>
-      <button onClick={toggleLibrary} className={`text-xs px-2 py-0.5 rounded ${isInVersion ? "bg-green-200 text-green-800" : "bg-zinc-200 text-zinc-600"}`}>
+      <button onClick={toggleLibrary} className={`text-[11px] font-medium px-2.5 py-1 rounded-full transition-colors ${isInVersion ? "bg-success text-white" : "bg-border text-text-secondary hover:bg-text-muted hover:text-white"}`}>
         {isInVersion ? "Active" : "Library"}
       </button>
-      <button onClick={() => deleteEntry(entry.id)} className="text-red-400 hover:text-red-600 text-sm">&times;</button>
+      <button onClick={() => deleteEntry(entry.id)} className="btn-danger p-1">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </button>
     </div>
   );
 }
@@ -123,17 +125,17 @@ export function LibraryView() {
   };
 
   return (
-    <div className="p-6 max-w-3xl space-y-6">
+    <div className="p-6 max-w-3xl space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Library</h2>
+        <h2 className="text-lg font-semibold tracking-tight text-text-primary">Library</h2>
         <div className="flex gap-2">
-          <select className="border rounded px-2 py-1 text-sm" value={sectionFilter} onChange={(e) => setSectionFilter(e.target.value as SectionType | "all")}>
+          <select className="border border-border rounded-lg px-2.5 py-1.5 text-xs bg-surface-raised text-text-secondary" value={sectionFilter} onChange={(e) => setSectionFilter(e.target.value as SectionType | "all")}>
             <option value="all">All Sections</option>
             {sections.map((s) => (
               <option key={s} value={s}>{sectionLabels[s]}</option>
             ))}
           </select>
-          <select className="border rounded px-2 py-1 text-sm" value={filter} onChange={(e) => setFilter(e.target.value as "all" | "active" | "library")}>
+          <select className="border border-border rounded-lg px-2.5 py-1.5 text-xs bg-surface-raised text-text-secondary" value={filter} onChange={(e) => setFilter(e.target.value as "all" | "active" | "library")}>
             <option value="all">All</option>
             <option value="active">Active</option>
             <option value="library">Library</option>
@@ -151,10 +153,10 @@ export function LibraryView() {
 
         return (
           <div key={section}>
-            <h3 className="font-semibold text-sm uppercase text-zinc-500 mb-2">{sectionLabels[section]}</h3>
+            <h3 className="text-xs font-semibold tracking-wider uppercase text-text-muted mb-2">{sectionLabels[section]}</h3>
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleDragEnd(e, section)}>
               <SortableContext items={sorted.map((e) => e.id)} strategy={verticalListSortingStrategy}>
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   {sorted.map((entry) => (
                     <SortableEntry key={entry.id} entry={entry} section={section} />
                   ))}
@@ -166,7 +168,7 @@ export function LibraryView() {
       })}
 
       {filteredEntries.length === 0 && (
-        <p className="text-zinc-500 text-sm">No entries found. Add entries from the editor tabs first.</p>
+        <p className="text-sm text-text-muted">No entries found. Add entries from the editor tabs first.</p>
       )}
     </div>
   );

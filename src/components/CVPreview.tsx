@@ -56,7 +56,7 @@ export function CVPreview() {
 
   if (!profile || !maybeVersion) {
     return (
-      <div className="p-6 text-zinc-500">
+      <div className="p-8 text-sm text-text-muted">
         {!profile ? "Loading profile..." : "No CV version selected. Create one from the sidebar."}
       </div>
     );
@@ -206,14 +206,14 @@ export function CVPreview() {
       <EditToolbar />
       <div
         ref={previewRef}
-        className="mx-auto bg-white shadow-lg"
+        className="mx-auto bg-white shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
         style={{ width: "210mm", minHeight: "297mm", padding: "0.5in" }}
         suppressContentEditableWarning
       >
         <div
           contentEditable
           suppressContentEditableWarning
-          className="outline-dashed outline-2 outline-blue-200 min-h-[200mm]"
+          className="outline-dashed outline-2 outline-accent-light/60 min-h-[200mm]"
           style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: "11pt", color: "#000", lineHeight: 1.15 }}
         >
           {/* Profile Header */}

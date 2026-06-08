@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "File Organizer": {
+      "source": "claude-office-skills/skills",
+      "sourceType": "github",
+      "skillPath": "file-organizer/SKILL.md",
+      "computedHash": "c887c5906baacf993aafcbe9f4d0c93a65d269ee8fc7e63044ae49909c50094b"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "516bd2154eb843a8240e43d5b285229129853114ad7075a5e141e1c08e408c84"
+    },
+    "performance": {
+      "source": "addyosmani/web-quality-skills",
+      "sourceType": "github",
+      "skillPath": "skills/performance/SKILL.md",
+      "computedHash": "646931a3af896ae12a3cad3d762668cb6487fe3ab179daf8fdc974fb79acfe49"
+    }
+  }
+}

@@ -21,7 +21,7 @@ export function ProfileEditor() {
     if (profile) setForm(profile);
   }, [profile]);
 
-  if (!profile) return <div className="p-6">Loading...</div>;
+  if (!profile) return <div className="p-6 text-text-muted">Loading...</div>;
 
   const update = (field: string, value: unknown) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -90,74 +90,79 @@ export function ProfileEditor() {
   const selectedSummaryId = activeVersion?.selectedSummaryId;
 
   return (
-    <div className="p-6 max-w-2xl space-y-6">
+    <div className="p-6 max-w-2xl space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Profile & About Me</h2>
-        <button onClick={save} className="bg-blue-600 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-700">
+        <h2 className="text-lg font-semibold tracking-tight text-text-primary">Profile & About Me</h2>
+        <button onClick={save} className="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Save
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Name</label>
-          <input className="w-full border rounded px-3 py-2 text-sm" value={form.name} onChange={(e) => update("name", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Phone</label>
-          <input className="w-full border rounded px-3 py-2 text-sm" value={form.phone} onChange={(e) => update("phone", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input className="w-full border rounded px-3 py-2 text-sm" value={form.email} onChange={(e) => update("email", e.target.value)} />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Location</label>
-          <input className="w-full border rounded px-3 py-2 text-sm" value={form.location} onChange={(e) => update("location", e.target.value)} />
+      <div className="card p-5 space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Name</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.name} onChange={(e) => update("name", e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Phone</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.phone} onChange={(e) => update("phone", e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Email</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.email} onChange={(e) => update("email", e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Location</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.location} onChange={(e) => update("location", e.target.value)} />
+          </div>
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Links</label>
+      <div className="card p-5 space-y-3">
+        <label className="block text-xs font-medium text-text-secondary tracking-wide uppercase">Links</label>
         <div className="space-y-2">
           {form.links.map((link, i) => (
             <div key={i} className="flex gap-2 items-center">
               <input
-                className="flex-1 border rounded px-3 py-2 text-sm"
-                placeholder="Label (e.g. LinkedIn)"
+                className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised"
+                placeholder="LinkedIn"
                 value={link.label}
                 onChange={(e) => updateLink(i, "label", e.target.value)}
               />
               <input
-                className="flex-[2] border rounded px-3 py-2 text-sm"
-                placeholder="URL"
+                className="flex-[2] border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised"
+                placeholder="https://..."
                 value={link.url}
                 onChange={(e) => updateLink(i, "url", e.target.value)}
               />
-              <button onClick={() => removeLink(i)} className="text-red-500 text-sm hover:text-red-700">
-                &times;
+              <button onClick={() => removeLink(i)} className="btn-danger p-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
           ))}
-          <button onClick={addLink} className="text-blue-600 text-sm hover:underline">
-            + Add link
+          <button onClick={addLink} className="btn-ghost text-xs">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add link
           </button>
         </div>
       </div>
 
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <label className="block text-sm font-medium">About Me Versions</label>
-          <button onClick={handleAddSummary} className="text-blue-600 text-sm hover:underline">
-            + Add version
+      <div className="card p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium text-text-secondary tracking-wide uppercase">About Me Versions</label>
+          <button onClick={handleAddSummary} className="btn-ghost text-xs">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add version
           </button>
         </div>
         <div className="space-y-3">
           {summaries.length === 0 ? (
-            <p className="text-sm text-gray-500">No About Me versions yet. Click "Add version" to create one.</p>
+            <p className="text-sm text-text-muted">No About Me versions yet.</p>
           ) : (
             summaries.map((summary) => (
-              <div key={summary.id} className="border rounded-lg p-3 bg-gray-50">
+              <div key={summary.id} className="border border-border rounded-lg p-4 bg-surface-alt/50">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <input
@@ -165,80 +170,36 @@ export function ProfileEditor() {
                       name="selectedSummary"
                       checked={selectedSummaryId === summary.id}
                       onChange={() => handleSelectSummary(summary.id)}
-                      className="accent-blue-600"
+                      className="accent-accent w-3.5 h-3.5"
                     />
-                    <span className="text-sm font-medium">
-                      {selectedSummaryId === summary.id ? "Selected" : "Select for CV"}
+                    <span className="text-xs text-text-secondary">
+                      {selectedSummaryId === summary.id ? "Active" : "Select for CV"}
                     </span>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleStartRename(summary.id, summary.name || "")}
-                      className="text-blue-600 text-sm hover:underline"
-                    >
-                      Rename
-                    </button>
-                    <button
-                      onClick={() => handleEditSummary(summary.id, summary.content)}
-                      className="text-blue-600 text-sm hover:underline"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteSummary(summary.id)}
-                      className="text-red-500 text-sm hover:underline"
-                    >
-                      Delete
-                    </button>
+                  <div className="flex gap-1">
+                    <button onClick={() => handleStartRename(summary.id, summary.name || "")} className="btn-ghost text-xs">Rename</button>
+                    <button onClick={() => handleEditSummary(summary.id, summary.content)} className="btn-ghost text-xs">Edit</button>
+                    <button onClick={() => handleDeleteSummary(summary.id)} className="btn-danger text-xs">Delete</button>
                   </div>
                 </div>
                 {renamingId === summary.id ? (
                   <div className="flex gap-2 mb-2">
-                    <input
-                      className="flex-1 border rounded px-2 py-1 text-sm"
-                      value={renameName}
-                      onChange={(e) => setRenameName(e.target.value)}
-                      autoFocus
-                    />
-                    <button
-                      onClick={handleSaveRename}
-                      className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setRenamingId(null)}
-                      className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-300"
-                    >
-                      Cancel
-                    </button>
+                    <input className="flex-1 border border-border rounded-lg px-2 py-1.5 text-sm bg-surface-raised" value={renameName} onChange={(e) => setRenameName(e.target.value)} autoFocus />
+                    <button onClick={handleSaveRename} className="btn-primary">Save</button>
+                    <button onClick={() => setRenamingId(null)} className="btn-ghost">Cancel</button>
                   </div>
                 ) : editingId === summary.id ? (
                   <div className="space-y-2">
-                    <textarea
-                      className="w-full border rounded px-3 py-2 text-sm min-h-[100px]"
-                      value={editContent}
-                      onChange={(e) => setEditContent(e.target.value)}
-                    />
+                    <textarea className="w-full border border-border rounded-lg px-3 py-2 text-sm min-h-[100px] bg-surface-raised" value={editContent} onChange={(e) => setEditContent(e.target.value)} />
                     <div className="flex gap-2">
-                      <button
-                        onClick={handleSaveEdit}
-                        className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-300"
-                      >
-                        Cancel
-                      </button>
+                      <button onClick={handleSaveEdit} className="btn-primary">Save</button>
+                      <button onClick={() => setEditingId(null)} className="btn-ghost">Cancel</button>
                     </div>
                   </div>
                 ) : (
                   <>
-                    <p className="text-sm font-semibold text-gray-800">{summary.name || "Untitled"}</p>
-                    <p className="text-sm text-gray-700 whitespace-pre-wrap">{summary.content}</p>
+                    <p className="text-sm font-medium text-text-primary">{summary.name || "Untitled"}</p>
+                    <p className="text-sm text-text-secondary whitespace-pre-wrap">{summary.content}</p>
                   </>
                 )}
               </div>

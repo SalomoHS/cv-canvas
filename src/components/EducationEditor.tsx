@@ -63,53 +63,59 @@ export function EducationEditor() {
   };
 
   return (
-    <div className="p-6 max-w-2xl space-y-6">
-      <h2 className="text-xl font-semibold">Education</h2>
+    <div className="p-6 max-w-2xl space-y-6 animate-fade-in">
+      <h2 className="text-lg font-semibold tracking-tight text-text-primary">Education</h2>
 
-      <div className="space-y-3 border rounded-lg p-4 bg-white">
-        <div className="grid grid-cols-2 gap-3">
+      <div className="card p-5 space-y-4">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Institution</label>
-            <input className="w-full border rounded px-3 py-2 text-sm" value={form.institution} onChange={(e) => setForm({ ...form, institution: e.target.value })} />
+            <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Institution</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.institution} onChange={(e) => setForm({ ...form, institution: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Period</label>
-            <input className="w-full border rounded px-3 py-2 text-sm" placeholder="Sep 2021 - Aug 2025" value={form.period} onChange={(e) => setForm({ ...form, period: e.target.value })} />
+            <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Period</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="Sep 2021 — Aug 2025" value={form.period} onChange={(e) => setForm({ ...form, period: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Degree</label>
-            <input className="w-full border rounded px-3 py-2 text-sm" value={form.degree} onChange={(e) => setForm({ ...form, degree: e.target.value })} />
+            <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Degree</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.degree} onChange={(e) => setForm({ ...form, degree: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Field</label>
-            <input className="w-full border rounded px-3 py-2 text-sm" value={form.field} onChange={(e) => setForm({ ...form, field: e.target.value })} />
+            <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Field</label>
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.field} onChange={(e) => setForm({ ...form, field: e.target.value })} />
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">GPA (optional)</label>
-          <input className="w-full border rounded px-3 py-2 text-sm" placeholder="3.76/4.00" value={form.gpa} onChange={(e) => setForm({ ...form, gpa: e.target.value })} />
+          <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">GPA (optional)</label>
+          <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="3.76 / 4.00" value={form.gpa} onChange={(e) => setForm({ ...form, gpa: e.target.value })} />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Related Modules</label>
+          <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Related Modules</label>
           {form.relatedModules.map((mod, i) => (
-            <div key={i} className="flex gap-2 mb-1">
-              <input className="flex-1 border rounded px-3 py-2 text-sm" value={mod} onChange={(e) => {
+            <div key={i} className="flex gap-2 mb-1.5">
+              <input className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={mod} onChange={(e) => {
                 const copy = [...form.relatedModules];
                 copy[i] = e.target.value;
                 setForm({ ...form, relatedModules: copy });
               }} />
               {form.relatedModules.length > 1 && (
-                <button onClick={() => setForm({ ...form, relatedModules: form.relatedModules.filter((_, idx) => idx !== i) })} className="text-red-500 text-sm">&times;</button>
+                <button onClick={() => setForm({ ...form, relatedModules: form.relatedModules.filter((_, idx) => idx !== i) })} className="btn-danger p-1.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
               )}
             </div>
           ))}
-          <button onClick={() => setForm({ ...form, relatedModules: [...form.relatedModules, ""] })} className="text-blue-600 text-sm hover:underline">+ Add module</button>
+          <button onClick={() => setForm({ ...form, relatedModules: [...form.relatedModules, ""] })} className="btn-ghost text-xs">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add module
+          </button>
         </div>
-        <div className="flex gap-2">
-          <button onClick={save} className="bg-blue-600 text-white px-4 py-1.5 rounded text-sm hover:bg-blue-700">
+        <div className="flex gap-2 pt-1">
+          <button onClick={save} className="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             {editingId ? "Update" : "Add"} Entry
           </button>
-          {editingId && <button onClick={resetForm} className="text-zinc-600 text-sm hover:underline">Cancel</button>}
+          {editingId && <button onClick={resetForm} className="btn-ghost">Cancel</button>}
         </div>
       </div>
 
@@ -123,16 +129,18 @@ export function EducationEditor() {
               draggable
               onDragStart={(e) => { e.dataTransfer.setData("application/x-cv-add-entry-id", entry.id); e.dataTransfer.effectAllowed = "move"; }}
               onClick={() => setSelectedEntryId(entry.id)}
-              className={`border rounded p-3 flex justify-between items-start cursor-grab active:cursor-grabbing hover:bg-zinc-50 transition-colors ${isSelected ? "ring-2 ring-blue-400" : ""}`}
+              className={`entry-card ${isSelected ? "selected" : ""}`}
             >
-              <div>
-                <p className="font-medium">{d.institution}</p>
-                <p className="text-sm text-zinc-600">{d.degree}{d.field ? `, ${d.field}` : ""} | {d.period}</p>
-                {d.gpa && <p className="text-xs text-zinc-500">GPA: {d.gpa}</p>}
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => openEdit(entry)} className="text-blue-600 text-sm hover:underline">Edit</button>
-                <button onClick={() => remove(entry.id)} className="text-red-500 text-sm hover:underline">Delete</button>
+              <div className="flex justify-between items-start">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm text-text-primary">{d.institution}</p>
+                  <p className="text-xs text-text-secondary mt-0.5">{d.degree}{d.field ? `, ${d.field}` : ""} <span className="text-text-muted mx-1">·</span> {d.period}</p>
+                  {d.gpa && <p className="text-xs text-text-muted mt-0.5">GPA: {d.gpa}</p>}
+                </div>
+                <div className="flex gap-1 ml-3 shrink-0">
+                  <button onClick={() => openEdit(entry)} className="btn-ghost text-xs">Edit</button>
+                  <button onClick={() => remove(entry.id)} className="btn-danger text-xs">Delete</button>
+                </div>
               </div>
             </div>
           );
