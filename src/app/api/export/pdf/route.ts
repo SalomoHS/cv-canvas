@@ -54,6 +54,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("PDF export error:", error);
-    return NextResponse.json({ error: "Failed to generate PDF" }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Failed to generate PDF";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

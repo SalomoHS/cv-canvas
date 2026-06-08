@@ -1,20 +1,10 @@
 import React from "react";
 import { Document, Page, View, Text, StyleSheet, Font, Link } from "@react-pdf/renderer";
 
-Font.register({
-  family: "Times New Roman",
-  fonts: [
-    { src: "https://fonts.cdnfonts.com/s/28797/TimesNewRoman.woff", fontWeight: "normal" },
-    { src: "https://fonts.cdnfonts.com/s/28797/TimesNewRomanBold.woff", fontWeight: "bold" },
-    { src: "https://fonts.cdnfonts.com/s/28797/TimesNewRomanItalic.woff", fontStyle: "italic" },
-    { src: "https://fonts.cdnfonts.com/s/28797/TimesNewRomanBoldItalic.woff", fontWeight: "bold", fontStyle: "italic" },
-  ],
-});
-
 const styles = StyleSheet.create({
   page: {
     padding: "0.5in",
-    fontFamily: "Times New Roman",
+    fontFamily: "Times-Roman",
     fontSize: 11,
     lineHeight: 1.15,
   },

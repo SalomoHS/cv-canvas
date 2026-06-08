@@ -293,6 +293,10 @@ export const useStore = create<StoreState>((set, get) => ({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ versionId }),
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: "Unknown error" }));
+      throw new Error(err.error || "Failed to export PDF");
+    }
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -310,6 +314,10 @@ export const useStore = create<StoreState>((set, get) => ({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ versionId }),
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: "Unknown error" }));
+      throw new Error(err.error || "Failed to export DOCX");
+    }
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
