@@ -191,7 +191,7 @@ export function CVPreview() {
           }
           dragSourceRef.current = null;
         }}
-        style={{ cursor: "grab", fontSize: "10pt", color: "#999", userSelect: "none" }}
+        style={{ cursor: "grab", fontSize: "16pt", color: "#999", userSelect: "none" }}
       >
         ⠿
       </span>
