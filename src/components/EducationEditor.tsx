@@ -26,6 +26,7 @@ export function EducationEditor() {
   const resetForm = () => {
     setForm({ institution: "", degree: "", field: "", period: "", gpa: "", relatedModules: [""] });
     setEditingId(null);
+    setSelectedEntryId(null);
   };
 
   const openEdit = (entry: (typeof eduEntries)[0]) => {

@@ -24,6 +24,7 @@ export function ProjectEditor() {
   const resetForm = () => {
     setForm({ name: "", link: "", year: "", bullets: [""] });
     setEditingId(null);
+    setSelectedEntryId(null);
   };
 
   const openEdit = (entry: (typeof projEntries)[0]) => {

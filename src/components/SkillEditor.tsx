@@ -19,6 +19,7 @@ export function SkillEditor() {
   const resetForm = () => {
     setForm({ category: "", items: [""] });
     setEditingId(null);
+    setSelectedEntryId(null);
   };
 
   const openEdit = (entry: (typeof skillEntries)[0]) => {

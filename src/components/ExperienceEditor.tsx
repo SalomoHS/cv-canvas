@@ -28,6 +28,7 @@ export function ExperienceEditor() {
     setForm({ role: "", organization: "", location: "", period: "", bullets: [""] });
     setEditingId(null);
     setSubType("professional");
+    setSelectedEntryId(null);
   };
 
   const openEdit = (entry: (typeof expEntries)[0]) => {
