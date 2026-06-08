@@ -49,10 +49,31 @@ export function CVPreview() {
   const [dragOverEntryId, setDragOverEntryId] = useState<string | null>(null);
   const dragSourceRef = useRef<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const [dragOverlay, setDragOverlay] = useState<{ visible: boolean; x: number; y: number }>({ visible: false, x: 0, y: 0 });
 
   useEffect(() => {
     setDragOverEntryId(null);
   }, [activeVersionId]);
+
+  useEffect(() => {
+    const handleDragOver = (e: DragEvent) => {
+      if (!dragSourceRef.current) return;
+      const previewEl = previewRef.current;
+      const isOutside = previewEl ? !previewEl.contains(e.target as Node) : true;
+      setDragOverlay({ visible: isOutside, x: e.clientX + 16, y: e.clientY + 16 });
+    };
+
+    const handleDragEnd = () => {
+      setDragOverlay({ visible: false, x: 0, y: 0 });
+    };
+
+    document.addEventListener("dragover", handleDragOver);
+    document.addEventListener("dragend", handleDragEnd);
+    return () => {
+      document.removeEventListener("dragover", handleDragOver);
+      document.removeEventListener("dragend", handleDragEnd);
+    };
+  }, []);
 
   if (!profile || !maybeVersion) {
     return (
@@ -167,11 +188,15 @@ export function CVPreview() {
         contentEditable={false}
         draggable
         onDragStart={(e) => {
+          const img = new Image();
+          img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+          e.dataTransfer.setDragImage(img, 0, 0);
           e.dataTransfer.setData("application/x-cv-reorder-id", entryId);
           e.dataTransfer.effectAllowed = "move";
           dragSourceRef.current = entryId;
         }}
         onDragEnd={() => {
+          setDragOverlay({ visible: false, x: 0, y: 0 });
           if (dragSourceRef.current === entryId) {
             const v = cvVersions.find((ver) => ver.id === activeVersionId);
             if (v) {
@@ -413,6 +438,37 @@ export function CVPreview() {
           />
         </div>
       </div>
+
+      {dragOverlay.visible && (
+        <div
+          style={{
+            position: "fixed",
+            left: dragOverlay.x,
+            top: dragOverlay.y,
+            transform: "translate(-50%, -50%)",
+            pointerEvents: "none",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "6px 12px",
+            borderRadius: 8,
+            backgroundColor: "rgba(239, 68, 68, 0.12)",
+            color: "#ef4444",
+            fontSize: 13,
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+            backdropFilter: "blur(4px)",
+            boxShadow: "0 2px 8px rgba(239, 68, 68, 0.2)",
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          </svg>
+          Delete
+        </div>
+      )}
     </div>
   );
 }

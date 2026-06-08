@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useStore } from "@/store/useStore";
 
 export function ProfileEditor() {
@@ -16,10 +16,20 @@ export function ProfileEditor() {
   const [editContent, setEditContent] = useState("");
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameName, setRenameName] = useState("");
+  const isInitial = useRef(true);
 
   useEffect(() => {
-    if (profile) setForm(profile);
+    if (profile) {
+      setForm(profile);
+      isInitial.current = false;
+    }
   }, [profile]);
+
+  useEffect(() => {
+    if (isInitial.current) return;
+    const timer = setTimeout(() => setProfile(form), 400);
+    return () => clearTimeout(timer);
+  }, [form]);
 
   if (!profile) return <div className="p-6 text-text-muted">Loading...</div>;
 
@@ -40,8 +50,6 @@ export function ProfileEditor() {
   const removeLink = (i: number) => {
     update("links", form.links.filter((_, idx) => idx !== i));
   };
-
-  const save = () => setProfile(form);
 
   const handleAddSummary = async () => {
     const name = prompt("Version name:") || "Untitled";
@@ -93,10 +101,6 @@ export function ProfileEditor() {
     <div className="p-6 max-w-2xl space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight text-text-primary">Profile & About Me</h2>
-        <button onClick={save} className="btn-primary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save
-        </button>
       </div>
 
       <div className="card p-5 space-y-4">
