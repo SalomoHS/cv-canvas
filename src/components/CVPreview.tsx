@@ -210,7 +210,7 @@ export function CVPreview() {
         <div
           contentEditable
           suppressContentEditableWarning
-          className="outline-dashed outline-2 outline-blue-200 min-h-[200mm] cursor-text"
+          className="outline-dashed outline-2 outline-blue-200 min-h-[200mm]"
           style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: "11pt", color: "#000", lineHeight: 1.15 }}
         >
           {/* Profile Header */}
@@ -494,7 +494,7 @@ function SectionSection({
             <div style={{ display: "flex", alignItems: "flex-start", gap: "4pt" }}>
               {makeDragHandle(entry.id, sectionType)}
               <div
-                style={{ flex: 1, minWidth: 0, cursor: "pointer" }}
+                style={{ flex: 1, minWidth: 0, cursor: "text" }}
                 onClick={() => onEntryClick(entry.id)}
               >
                 {entry.content}
