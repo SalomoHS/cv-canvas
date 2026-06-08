@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Profile {
+  id        String   @id @default(uuid())
+  name      String   @default("")
+  phone     String   @default("")
+  email     String   @default("")
+  location  String   @default("")
+  links     Json     @default("[]")
+  summary   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Entry {
+  id        String   @id @default(uuid())
+  section   String
+  subType   String?
+  status    String   @default("library")
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CVVersion {
+  id           String   @id @default(uuid())
+  name         String
+  entryIds     Json     @default("[]")
+  sectionOrder Json     @default("{}")
+  skillOrder   Json     @default("[]")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

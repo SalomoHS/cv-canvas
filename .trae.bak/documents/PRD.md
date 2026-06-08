@@ -269,7 +269,7 @@ Styling ini adalah template fix yang digunakan untuk PDF dan DOCX export. Tidak 
 | Property | Value |
 |---|---|
 | Paper size | A4 (210 × 297 mm) |
-| Margin | 1 inch semua sisi (top, right, bottom, left) |
+| Margin | 0.5 inch semua sisi (top, right, bottom, left) |
 | Font family | Times New Roman (serif) |
 | Base font size | 11pt |
 | Text color | Black (`#000000`) |
@@ -414,7 +414,7 @@ Beberapa baris menggunakan layout dua kolom (left + right). Implementasinya meng
 
 | Target | Implementasi |
 |---|---|
-| DOCX | Tab stop di right margin (9026 DXA untuk A4 dengan 1" margin) |
+| DOCX | Tab stop di right margin (9026 DXA untuk A4 dengan 0.5" margin) |
 | PDF (`@react-pdf/renderer`) | `flexDirection: 'row'`, `justifyContent: 'space-between'` |
 
 Baris yang menggunakan two-column layout:
