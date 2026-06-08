@@ -10,7 +10,6 @@ const tabs: { id: Tab; label: string; icon: string }[] = [
   { id: "experience", label: "Experience", icon: "M9 17h6l3-3v-6h-2.5l-2-3h-5l-2 3H6v6l3 3ZM9 1l3 3H3l-2 2v12l2 2h16l2-2V7l-1-3h-5l-4-4h-2ZM6 14v-4h12v4H6Z" },
   { id: "projects", label: "Projects", icon: "M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9 2 2 4-4" },
   { id: "skills", label: "Skills", icon: "M5 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5Zm0 8h14M9 3v18" },
-  { id: "library", label: "Library", icon: "M4 21V7a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v14l-4-2-4 2-4-2-4 2ZM4 21l4-2 4 2 4-2 4 2" },
   { id: "preview", label: "Preview", icon: "M12 4v16m-8-8h16" },
 ];
 

@@ -7,7 +7,6 @@ import { EducationEditor } from "@/components/EducationEditor";
 import { ExperienceEditor } from "@/components/ExperienceEditor";
 import { ProjectEditor } from "@/components/ProjectEditor";
 import { SkillEditor } from "@/components/SkillEditor";
-import { LibraryView } from "@/components/LibraryView";
 import { CVPreview } from "@/components/CVPreview";
 import { useStore } from "@/store/useStore";
 import { Agentation } from "agentation";
@@ -39,8 +38,6 @@ export default function Home() {
         return <ProjectEditor />;
       case "skills":
         return <SkillEditor />;
-      case "library":
-        return <LibraryView />;
       default:
         return null;
     }
