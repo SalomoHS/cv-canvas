@@ -10,6 +10,7 @@ import { SkillEditor } from "@/components/SkillEditor";
 import { LibraryView } from "@/components/LibraryView";
 import { CVPreview } from "@/components/CVPreview";
 import { useStore } from "@/store/useStore";
+import { Agentation } from "agentation";
 
 export default function Home() {
   const { init, loading } = useStore();
@@ -50,6 +51,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen">
+      <Agentation />
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="flex-1 overflow-y-auto bg-zinc-50">
         {activeTab !== "preview" ? renderContent() : <div className="p-6 text-zinc-500">Select a section from the sidebar to edit.</div>}
