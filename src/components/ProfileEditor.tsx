@@ -172,8 +172,8 @@ export function ProfileEditor() {
                       onChange={() => handleSelectSummary(summary.id)}
                       className="accent-accent w-3.5 h-3.5"
                     />
-                    <span className="text-xs text-text-secondary">
-                      {selectedSummaryId === summary.id ? "Active" : "Select for CV"}
+                    <span className="text-xs font-medium text-text-primary">
+                      {summary.name || "Untitled"}
                     </span>
                   </div>
                   <div className="flex gap-1">
@@ -198,7 +198,6 @@ export function ProfileEditor() {
                   </div>
                 ) : (
                   <>
-                    <p className="text-sm font-medium text-text-primary">{summary.name || "Untitled"}</p>
                     <p className="text-sm text-text-secondary whitespace-pre-wrap">{summary.content}</p>
                   </>
                 )}
