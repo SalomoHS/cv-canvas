@@ -133,7 +133,7 @@ export function CVPreview() {
       if (oldIdx !== -1 && targetIdx !== -1) {
         const [moved] = newOrder.splice(oldIdx, 1);
         const adjusted = newOrder.indexOf(targetEntryId);
-        newOrder.splice(adjusted, 0, moved);
+        newOrder.splice(oldIdx < targetIdx ? adjusted + 1 : adjusted, 0, moved);
         if (section === "skill") {
           useStore.getState().reorderSkills(newOrder);
         } else {
