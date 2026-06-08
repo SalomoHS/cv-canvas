@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     padding: "0.5in",
     fontFamily: "Times New Roman",
     fontSize: 11,
-    lineHeight: 1,
+    lineHeight: 1.15,
   },
   header: {
     textAlign: "center",
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   bullet: {
     flexDirection: "row",
-    marginLeft: 10,
+    marginLeft: 12,
     marginBottom: 2,
   },
   bulletPoint: {
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   skillEntry: {
     flexDirection: "row",
-    marginLeft: 10,
+    marginLeft: 12,
     marginBottom: 2,
   },
   skillCategory: {

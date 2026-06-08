@@ -52,10 +52,7 @@ export function CVPreview() {
     ? skillOrder.map((id) => entries.find((e) => e.id === id)).filter((e): e is Entry => !!e && e.section === "skill")
     : entries.filter((e) => e.section === "skill");
 
-  const linkText = profile.links
-    .filter((l) => l.label && l.url)
-    .map((l) => l.label)
-    .join(" | ");
+  const validLinks = profile.links.filter((l) => l.label && l.url);
 
   return (
     <div className="p-6">
@@ -67,9 +64,14 @@ export function CVPreview() {
             <div style={{ fontSize: "11pt", marginTop: "2pt" }}>
               {[profile.phone, profile.email, profile.location].filter(Boolean).join(" | ")}
             </div>
-            {linkText && (
-              <div style={{ fontSize: "11pt", marginTop: "2pt", color: "blue", textDecoration: "underline" }}>
-                {linkText}
+            {validLinks.length > 0 && (
+              <div style={{ fontSize: "11pt", marginTop: "2pt" }}>
+                {validLinks.map((l, i) => (
+                  <span key={l.url}>
+                    {i > 0 && <span> | </span>}
+                    <a href={l.url} target="_blank" rel="noopener noreferrer" style={{ color: "blue", textDecoration: "underline" }}>{l.label}</a>
+                  </span>
+                ))}
               </div>
             )}
           </div>
@@ -158,10 +160,10 @@ export function CVPreview() {
                 return (
                   <div key={entry.id} style={{ marginBottom: "6pt" }}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span style={{ fontWeight: "bold", fontStyle: "italic" }}>
-                        {d.name}
-                        {d.link && <span> {"\u2013"} View Project</span>}
-                      </span>
+                        <span style={{ fontWeight: "bold", fontStyle: "italic" }}>
+                          {d.name}
+                          {d.link && <span> {"\u2013"} <a href={d.link} target="_blank" rel="noopener noreferrer" style={{ color: "blue", textDecoration: "underline" }}>View Project</a></span>}
+                        </span>
                       <span>{d.year}</span>
                     </div>
                     <ul style={{ margin: "2pt 0 0 20pt", padding: 0, listStyle: "none" }}>
@@ -180,7 +182,7 @@ export function CVPreview() {
               {skillEntries.map((entry) => {
                 const d = entry.data as { category: string; items: string[] };
                 return (
-                  <div key={entry.id} style={{ marginLeft: "10pt", marginBottom: "2pt" }}>
+                  <div key={entry.id} style={{ marginLeft: "12pt", marginBottom: "2pt" }}>
                     <span>{"\u2022"} <strong>{d.category}:</strong> {d.items.join(", ")}.</span>
                   </div>
                 );
