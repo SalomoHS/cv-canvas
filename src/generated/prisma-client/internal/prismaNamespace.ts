@@ -385,7 +385,9 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Profile: 'Profile',
+  Summary: 'Summary',
   Entry: 'Entry',
+  Crate: 'Crate',
   CVVersion: 'CVVersion'
 } as const
 
@@ -402,7 +404,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "profile" | "entry" | "cVVersion"
+    modelProps: "profile" | "summary" | "entry" | "crate" | "cVVersion"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -480,6 +482,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Summary: {
+      payload: Prisma.$SummaryPayload<ExtArgs>
+      fields: Prisma.SummaryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SummaryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SummaryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        findFirst: {
+          args: Prisma.SummaryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SummaryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        findMany: {
+          args: Prisma.SummaryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>[]
+        }
+        create: {
+          args: Prisma.SummaryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        createMany: {
+          args: Prisma.SummaryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SummaryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>[]
+        }
+        delete: {
+          args: Prisma.SummaryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        update: {
+          args: Prisma.SummaryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        deleteMany: {
+          args: Prisma.SummaryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SummaryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SummaryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>[]
+        }
+        upsert: {
+          args: Prisma.SummaryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SummaryPayload>
+        }
+        aggregate: {
+          args: Prisma.SummaryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSummary>
+        }
+        groupBy: {
+          args: Prisma.SummaryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SummaryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SummaryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SummaryCountAggregateOutputType> | number
+        }
+      }
+    }
     Entry: {
       payload: Prisma.$EntryPayload<ExtArgs>
       fields: Prisma.EntryFieldRefs
@@ -551,6 +627,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.EntryCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.EntryCountAggregateOutputType> | number
+        }
+      }
+    }
+    Crate: {
+      payload: Prisma.$CratePayload<ExtArgs>
+      fields: Prisma.CrateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CrateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CrateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload>
+        }
+        findFirst: {
+          args: Prisma.CrateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CrateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload>
+        }
+        findMany: {
+          args: Prisma.CrateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload>[]
+        }
+        create: {
+          args: Prisma.CrateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload>
+        }
+        createMany: {
+          args: Prisma.CrateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CrateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload>[]
+        }
+        delete: {
+          args: Prisma.CrateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload>
+        }
+        update: {
+          args: Prisma.CrateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload>
+        }
+        deleteMany: {
+          args: Prisma.CrateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CrateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CrateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload>[]
+        }
+        upsert: {
+          args: Prisma.CrateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CratePayload>
+        }
+        aggregate: {
+          args: Prisma.CrateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCrate>
+        }
+        groupBy: {
+          args: Prisma.CrateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CrateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CrateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CrateCountAggregateOutputType> | number
         }
       }
     }
@@ -674,12 +824,23 @@ export const ProfileScalarFieldEnum = {
   email: 'email',
   location: 'location',
   links: 'links',
-  summary: 'summary',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+
+
+export const SummaryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  content: 'content',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SummaryScalarFieldEnum = (typeof SummaryScalarFieldEnum)[keyof typeof SummaryScalarFieldEnum]
 
 
 export const EntryScalarFieldEnum = {
@@ -695,12 +856,24 @@ export const EntryScalarFieldEnum = {
 export type EntryScalarFieldEnum = (typeof EntryScalarFieldEnum)[keyof typeof EntryScalarFieldEnum]
 
 
+export const CrateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CrateScalarFieldEnum = (typeof CrateScalarFieldEnum)[keyof typeof CrateScalarFieldEnum]
+
+
 export const CVVersionScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  crateId: 'crateId',
   entryIds: 'entryIds',
   sectionOrder: 'sectionOrder',
   skillOrder: 'skillOrder',
+  selectedSummaryId: 'selectedSummaryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -793,6 +966,13 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -920,7 +1100,9 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   profile?: Prisma.ProfileOmit
+  summary?: Prisma.SummaryOmit
   entry?: Prisma.EntryOmit
+  crate?: Prisma.CrateOmit
   cVVersion?: Prisma.CVVersionOmit
 }
 

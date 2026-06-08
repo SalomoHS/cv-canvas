@@ -44,7 +44,7 @@ const sectionToTab: Record<string, string> = {
 };
 
 export function CVPreview() {
-  const { profile, entries, cvVersions, activeVersionId, reorderEntries, updateVersion, selectedEntryId, setSelectedEntryId, setActiveTab } = useStore();
+  const { profile, entries, cvVersions, activeVersionId, reorderEntries, updateVersion, selectedEntryId, setSelectedEntryId, setActiveTab, summaries } = useStore();
   const maybeVersion = cvVersions.find((v) => v.id === activeVersionId);
   const [dragOverEntryId, setDragOverEntryId] = useState<string | null>(null);
   const dragSourceRef = useRef<string | null>(null);
@@ -62,6 +62,9 @@ export function CVPreview() {
     );
   }
   const version = maybeVersion;
+  const selectedSummary = version.selectedSummaryId
+    ? summaries.find((s) => s.id === version.selectedSummaryId)
+    : summaries.find((s) => s.isDefault) ?? summaries[0];
 
   const eduOrder = version.sectionOrder.education;
   const expOrder = version.sectionOrder.experience;
@@ -232,10 +235,10 @@ export function CVPreview() {
           </div>
 
           {/* About Me */}
-          {profile.summary && (
+          {selectedSummary && (
             <div>
               <SectionHeading text="ABOUT ME" />
-              <p style={{ margin: 0 }}>{profile.summary}</p>
+              <p style={{ margin: 0 }}>{selectedSummary.content}</p>
             </div>
           )}
 

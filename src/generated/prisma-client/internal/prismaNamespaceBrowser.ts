@@ -52,7 +52,9 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Profile: 'Profile',
+  Summary: 'Summary',
   Entry: 'Entry',
+  Crate: 'Crate',
   CVVersion: 'CVVersion'
 } as const
 
@@ -79,12 +81,23 @@ export const ProfileScalarFieldEnum = {
   email: 'email',
   location: 'location',
   links: 'links',
-  summary: 'summary',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+
+
+export const SummaryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  content: 'content',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SummaryScalarFieldEnum = (typeof SummaryScalarFieldEnum)[keyof typeof SummaryScalarFieldEnum]
 
 
 export const EntryScalarFieldEnum = {
@@ -100,12 +113,24 @@ export const EntryScalarFieldEnum = {
 export type EntryScalarFieldEnum = (typeof EntryScalarFieldEnum)[keyof typeof EntryScalarFieldEnum]
 
 
+export const CrateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CrateScalarFieldEnum = (typeof CrateScalarFieldEnum)[keyof typeof CrateScalarFieldEnum]
+
+
 export const CVVersionScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  crateId: 'crateId',
   entryIds: 'entryIds',
   sectionOrder: 'sectionOrder',
   skillOrder: 'skillOrder',
+  selectedSummaryId: 'selectedSummaryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

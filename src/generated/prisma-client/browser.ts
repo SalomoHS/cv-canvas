@@ -23,10 +23,20 @@ export * from './enums';
  */
 export type Profile = Prisma.ProfileModel
 /**
+ * Model Summary
+ * 
+ */
+export type Summary = Prisma.SummaryModel
+/**
  * Model Entry
  * 
  */
 export type Entry = Prisma.EntryModel
+/**
+ * Model Crate
+ * 
+ */
+export type Crate = Prisma.CrateModel
 /**
  * Model CVVersion
  * 

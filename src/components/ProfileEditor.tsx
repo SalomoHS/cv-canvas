@@ -4,15 +4,18 @@ import { useState, useEffect } from "react";
 import { useStore } from "@/store/useStore";
 
 export function ProfileEditor() {
-  const { profile, setProfile } = useStore();
+  const { profile, setProfile, summaries, addSummary, updateSummary, deleteSummary, cvVersions, activeVersionId, updateVersion } = useStore();
   const [form, setForm] = useState({
     name: "",
     phone: "",
     email: "",
     location: "",
-    summary: "",
     links: [{ label: "", url: "" }],
   });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState("");
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameName, setRenameName] = useState("");
 
   useEffect(() => {
     if (profile) setForm(profile);
@@ -39,6 +42,52 @@ export function ProfileEditor() {
   };
 
   const save = () => setProfile(form);
+
+  const handleAddSummary = async () => {
+    const name = prompt("Version name:") || "Untitled";
+    await addSummary(name, "New About Me version...");
+  };
+
+  const handleEditSummary = (id: string, content: string) => {
+    setEditingId(id);
+    setEditContent(content);
+  };
+
+  const handleSaveEdit = async () => {
+    if (editingId) {
+      await updateSummary(editingId, { content: editContent });
+      setEditingId(null);
+      setEditContent("");
+    }
+  };
+
+  const handleStartRename = (id: string, currentName: string) => {
+    setRenamingId(id);
+    setRenameName(currentName);
+  };
+
+  const handleSaveRename = async () => {
+    if (renamingId) {
+      await updateSummary(renamingId, { name: renameName });
+      setRenamingId(null);
+      setRenameName("");
+    }
+  };
+
+  const handleDeleteSummary = async (id: string) => {
+    if (confirm("Delete this About Me version?")) {
+      await deleteSummary(id);
+    }
+  };
+
+  const handleSelectSummary = async (summaryId: string) => {
+    if (activeVersionId) {
+      await updateVersion(activeVersionId, { selectedSummaryId: summaryId });
+    }
+  };
+
+  const activeVersion = cvVersions.find((v) => v.id === activeVersionId);
+  const selectedSummaryId = activeVersion?.selectedSummaryId;
 
   return (
     <div className="p-6 max-w-2xl space-y-6">
@@ -97,12 +146,105 @@ export function ProfileEditor() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">About Me</label>
-        <textarea
-          className="w-full border rounded px-3 py-2 text-sm min-h-[120px]"
-          value={form.summary}
-          onChange={(e) => update("summary", e.target.value)}
-        />
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-sm font-medium">About Me Versions</label>
+          <button onClick={handleAddSummary} className="text-blue-600 text-sm hover:underline">
+            + Add version
+          </button>
+        </div>
+        <div className="space-y-3">
+          {summaries.length === 0 ? (
+            <p className="text-sm text-gray-500">No About Me versions yet. Click "Add version" to create one.</p>
+          ) : (
+            summaries.map((summary) => (
+              <div key={summary.id} className="border rounded-lg p-3 bg-gray-50">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="selectedSummary"
+                      checked={selectedSummaryId === summary.id}
+                      onChange={() => handleSelectSummary(summary.id)}
+                      className="accent-blue-600"
+                    />
+                    <span className="text-sm font-medium">
+                      {selectedSummaryId === summary.id ? "Selected" : "Select for CV"}
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleStartRename(summary.id, summary.name || "")}
+                      className="text-blue-600 text-sm hover:underline"
+                    >
+                      Rename
+                    </button>
+                    <button
+                      onClick={() => handleEditSummary(summary.id, summary.content)}
+                      className="text-blue-600 text-sm hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSummary(summary.id)}
+                      className="text-red-500 text-sm hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                {renamingId === summary.id ? (
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      className="flex-1 border rounded px-2 py-1 text-sm"
+                      value={renameName}
+                      onChange={(e) => setRenameName(e.target.value)}
+                      autoFocus
+                    />
+                    <button
+                      onClick={handleSaveRename}
+                      className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setRenamingId(null)}
+                      className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-300"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : editingId === summary.id ? (
+                  <div className="space-y-2">
+                    <textarea
+                      className="w-full border rounded px-3 py-2 text-sm min-h-[100px]"
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleSaveEdit}
+                        className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setEditingId(null)}
+                        className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-300"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold text-gray-800">{summary.name || "Untitled"}</p>
+                    <p className="text-sm text-gray-700 whitespace-pre-wrap">{summary.content}</p>
+                  </>
+                )}
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

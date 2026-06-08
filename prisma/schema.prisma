@@ -14,7 +14,15 @@ model Profile {
   email     String   @default("")
   location  String   @default("")
   links     Json     @default("[]")
-  summary   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Summary {
+  id        String   @id @default(uuid())
+  name      String   @default("")
+  content   String   @default("")
+  isDefault Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -29,12 +37,23 @@ model Entry {
   updatedAt DateTime @updatedAt
 }
 
+model Crate {
+  id        String      @id @default(uuid())
+  name      String
+  versions  CVVersion[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
 model CVVersion {
-  id           String   @id @default(uuid())
-  name         String
-  entryIds     Json     @default("[]")
-  sectionOrder Json     @default("{}")
-  skillOrder   Json     @default("[]")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                String   @id @default(uuid())
+  name              String
+  crateId           String?
+  crate             Crate?   @relation(fields: [crateId], references: [id], onDelete: SetNull)
+  entryIds          Json     @default("[]")
+  sectionOrder      Json     @default("{}")
+  skillOrder        Json     @default("[]")
+  selectedSummaryId String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }

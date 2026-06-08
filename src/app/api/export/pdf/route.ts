@@ -7,10 +7,11 @@ import React from "react";
 export async function POST(request: Request) {
   try {
     const { versionId } = await request.json();
-    const [profile, allEntries, version] = await Promise.all([
+    const [profile, allEntries, version, summaries] = await Promise.all([
       prisma.profile.findFirst(),
       prisma.entry.findMany(),
       prisma.cVVersion.findUnique({ where: { id: versionId } }),
+      prisma.summary.findMany(),
     ]);
 
     if (!profile || !version) {
@@ -24,7 +25,6 @@ export async function POST(request: Request) {
         email: profile.email,
         location: profile.location,
         links: profile.links as { label: string; url: string }[],
-        summary: profile.summary,
       },
       entries: allEntries.map((e) => ({
         id: e.id,
@@ -36,7 +36,13 @@ export async function POST(request: Request) {
         entryIds: version.entryIds as string[],
         sectionOrder: version.sectionOrder as Record<string, string[]>,
         skillOrder: version.skillOrder as string[],
+        selectedSummaryId: version.selectedSummaryId,
       },
+      summaries: summaries.map((s) => ({
+        id: s.id,
+        content: s.content,
+        isDefault: s.isDefault,
+      })),
     };
 
     const buffer = await renderToBuffer(React.createElement(CVPDFDocument, { data }) as never);

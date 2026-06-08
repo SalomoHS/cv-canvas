@@ -9,6 +9,8 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Profile'
+export type * from './models/Summary'
 export type * from './models/Entry'
+export type * from './models/Crate'
 export type * from './models/CVVersion'
 export type * from './commonInputTypes'

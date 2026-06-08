@@ -27,6 +27,8 @@ export type AggregateCVVersion = {
 export type CVVersionMinAggregateOutputType = {
   id: string | null
   name: string | null
+  crateId: string | null
+  selectedSummaryId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -34,6 +36,8 @@ export type CVVersionMinAggregateOutputType = {
 export type CVVersionMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  crateId: string | null
+  selectedSummaryId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -41,9 +45,11 @@ export type CVVersionMaxAggregateOutputType = {
 export type CVVersionCountAggregateOutputType = {
   id: number
   name: number
+  crateId: number
   entryIds: number
   sectionOrder: number
   skillOrder: number
+  selectedSummaryId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -53,6 +59,8 @@ export type CVVersionCountAggregateOutputType = {
 export type CVVersionMinAggregateInputType = {
   id?: true
   name?: true
+  crateId?: true
+  selectedSummaryId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -60,6 +68,8 @@ export type CVVersionMinAggregateInputType = {
 export type CVVersionMaxAggregateInputType = {
   id?: true
   name?: true
+  crateId?: true
+  selectedSummaryId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -67,9 +77,11 @@ export type CVVersionMaxAggregateInputType = {
 export type CVVersionCountAggregateInputType = {
   id?: true
   name?: true
+  crateId?: true
   entryIds?: true
   sectionOrder?: true
   skillOrder?: true
+  selectedSummaryId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -150,9 +162,11 @@ export type CVVersionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type CVVersionGroupByOutputType = {
   id: string
   name: string
+  crateId: string | null
   entryIds: runtime.JsonValue
   sectionOrder: runtime.JsonValue
   skillOrder: runtime.JsonValue
+  selectedSummaryId: string | null
   createdAt: Date
   updatedAt: Date
   _count: CVVersionCountAggregateOutputType | null
@@ -181,21 +195,27 @@ export type CVVersionWhereInput = {
   NOT?: Prisma.CVVersionWhereInput | Prisma.CVVersionWhereInput[]
   id?: Prisma.StringFilter<"CVVersion"> | string
   name?: Prisma.StringFilter<"CVVersion"> | string
+  crateId?: Prisma.StringNullableFilter<"CVVersion"> | string | null
   entryIds?: Prisma.JsonFilter<"CVVersion">
   sectionOrder?: Prisma.JsonFilter<"CVVersion">
   skillOrder?: Prisma.JsonFilter<"CVVersion">
+  selectedSummaryId?: Prisma.StringNullableFilter<"CVVersion"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CVVersion"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CVVersion"> | Date | string
+  crate?: Prisma.XOR<Prisma.CrateNullableScalarRelationFilter, Prisma.CrateWhereInput> | null
 }
 
 export type CVVersionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  crateId?: Prisma.SortOrderInput | Prisma.SortOrder
   entryIds?: Prisma.SortOrder
   sectionOrder?: Prisma.SortOrder
   skillOrder?: Prisma.SortOrder
+  selectedSummaryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  crate?: Prisma.CrateOrderByWithRelationInput
 }
 
 export type CVVersionWhereUniqueInput = Prisma.AtLeast<{
@@ -204,19 +224,24 @@ export type CVVersionWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.CVVersionWhereInput[]
   NOT?: Prisma.CVVersionWhereInput | Prisma.CVVersionWhereInput[]
   name?: Prisma.StringFilter<"CVVersion"> | string
+  crateId?: Prisma.StringNullableFilter<"CVVersion"> | string | null
   entryIds?: Prisma.JsonFilter<"CVVersion">
   sectionOrder?: Prisma.JsonFilter<"CVVersion">
   skillOrder?: Prisma.JsonFilter<"CVVersion">
+  selectedSummaryId?: Prisma.StringNullableFilter<"CVVersion"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CVVersion"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CVVersion"> | Date | string
+  crate?: Prisma.XOR<Prisma.CrateNullableScalarRelationFilter, Prisma.CrateWhereInput> | null
 }, "id">
 
 export type CVVersionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  crateId?: Prisma.SortOrderInput | Prisma.SortOrder
   entryIds?: Prisma.SortOrder
   sectionOrder?: Prisma.SortOrder
   skillOrder?: Prisma.SortOrder
+  selectedSummaryId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.CVVersionCountOrderByAggregateInput
@@ -230,9 +255,11 @@ export type CVVersionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.CVVersionScalarWhereWithAggregatesInput | Prisma.CVVersionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"CVVersion"> | string
   name?: Prisma.StringWithAggregatesFilter<"CVVersion"> | string
+  crateId?: Prisma.StringNullableWithAggregatesFilter<"CVVersion"> | string | null
   entryIds?: Prisma.JsonWithAggregatesFilter<"CVVersion">
   sectionOrder?: Prisma.JsonWithAggregatesFilter<"CVVersion">
   skillOrder?: Prisma.JsonWithAggregatesFilter<"CVVersion">
+  selectedSummaryId?: Prisma.StringNullableWithAggregatesFilter<"CVVersion"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CVVersion"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CVVersion"> | Date | string
 }
@@ -243,16 +270,20 @@ export type CVVersionCreateInput = {
   entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  crate?: Prisma.CrateCreateNestedOneWithoutVersionsInput
 }
 
 export type CVVersionUncheckedCreateInput = {
   id?: string
   name: string
+  crateId?: string | null
   entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -263,16 +294,20 @@ export type CVVersionUpdateInput = {
   entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  crate?: Prisma.CrateUpdateOneWithoutVersionsNestedInput
 }
 
 export type CVVersionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  crateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -280,9 +315,11 @@ export type CVVersionUncheckedUpdateInput = {
 export type CVVersionCreateManyInput = {
   id?: string
   name: string
+  crateId?: string | null
   entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -293,6 +330,7 @@ export type CVVersionUpdateManyMutationInput = {
   entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -300,19 +338,33 @@ export type CVVersionUpdateManyMutationInput = {
 export type CVVersionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  crateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type CVVersionListRelationFilter = {
+  every?: Prisma.CVVersionWhereInput
+  some?: Prisma.CVVersionWhereInput
+  none?: Prisma.CVVersionWhereInput
+}
+
+export type CVVersionOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type CVVersionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  crateId?: Prisma.SortOrder
   entryIds?: Prisma.SortOrder
   sectionOrder?: Prisma.SortOrder
   skillOrder?: Prisma.SortOrder
+  selectedSummaryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -320,6 +372,8 @@ export type CVVersionCountOrderByAggregateInput = {
 export type CVVersionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  crateId?: Prisma.SortOrder
+  selectedSummaryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -327,8 +381,159 @@ export type CVVersionMaxOrderByAggregateInput = {
 export type CVVersionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  crateId?: Prisma.SortOrder
+  selectedSummaryId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type CVVersionCreateNestedManyWithoutCrateInput = {
+  create?: Prisma.XOR<Prisma.CVVersionCreateWithoutCrateInput, Prisma.CVVersionUncheckedCreateWithoutCrateInput> | Prisma.CVVersionCreateWithoutCrateInput[] | Prisma.CVVersionUncheckedCreateWithoutCrateInput[]
+  connectOrCreate?: Prisma.CVVersionCreateOrConnectWithoutCrateInput | Prisma.CVVersionCreateOrConnectWithoutCrateInput[]
+  createMany?: Prisma.CVVersionCreateManyCrateInputEnvelope
+  connect?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+}
+
+export type CVVersionUncheckedCreateNestedManyWithoutCrateInput = {
+  create?: Prisma.XOR<Prisma.CVVersionCreateWithoutCrateInput, Prisma.CVVersionUncheckedCreateWithoutCrateInput> | Prisma.CVVersionCreateWithoutCrateInput[] | Prisma.CVVersionUncheckedCreateWithoutCrateInput[]
+  connectOrCreate?: Prisma.CVVersionCreateOrConnectWithoutCrateInput | Prisma.CVVersionCreateOrConnectWithoutCrateInput[]
+  createMany?: Prisma.CVVersionCreateManyCrateInputEnvelope
+  connect?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+}
+
+export type CVVersionUpdateManyWithoutCrateNestedInput = {
+  create?: Prisma.XOR<Prisma.CVVersionCreateWithoutCrateInput, Prisma.CVVersionUncheckedCreateWithoutCrateInput> | Prisma.CVVersionCreateWithoutCrateInput[] | Prisma.CVVersionUncheckedCreateWithoutCrateInput[]
+  connectOrCreate?: Prisma.CVVersionCreateOrConnectWithoutCrateInput | Prisma.CVVersionCreateOrConnectWithoutCrateInput[]
+  upsert?: Prisma.CVVersionUpsertWithWhereUniqueWithoutCrateInput | Prisma.CVVersionUpsertWithWhereUniqueWithoutCrateInput[]
+  createMany?: Prisma.CVVersionCreateManyCrateInputEnvelope
+  set?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+  disconnect?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+  delete?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+  connect?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+  update?: Prisma.CVVersionUpdateWithWhereUniqueWithoutCrateInput | Prisma.CVVersionUpdateWithWhereUniqueWithoutCrateInput[]
+  updateMany?: Prisma.CVVersionUpdateManyWithWhereWithoutCrateInput | Prisma.CVVersionUpdateManyWithWhereWithoutCrateInput[]
+  deleteMany?: Prisma.CVVersionScalarWhereInput | Prisma.CVVersionScalarWhereInput[]
+}
+
+export type CVVersionUncheckedUpdateManyWithoutCrateNestedInput = {
+  create?: Prisma.XOR<Prisma.CVVersionCreateWithoutCrateInput, Prisma.CVVersionUncheckedCreateWithoutCrateInput> | Prisma.CVVersionCreateWithoutCrateInput[] | Prisma.CVVersionUncheckedCreateWithoutCrateInput[]
+  connectOrCreate?: Prisma.CVVersionCreateOrConnectWithoutCrateInput | Prisma.CVVersionCreateOrConnectWithoutCrateInput[]
+  upsert?: Prisma.CVVersionUpsertWithWhereUniqueWithoutCrateInput | Prisma.CVVersionUpsertWithWhereUniqueWithoutCrateInput[]
+  createMany?: Prisma.CVVersionCreateManyCrateInputEnvelope
+  set?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+  disconnect?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+  delete?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+  connect?: Prisma.CVVersionWhereUniqueInput | Prisma.CVVersionWhereUniqueInput[]
+  update?: Prisma.CVVersionUpdateWithWhereUniqueWithoutCrateInput | Prisma.CVVersionUpdateWithWhereUniqueWithoutCrateInput[]
+  updateMany?: Prisma.CVVersionUpdateManyWithWhereWithoutCrateInput | Prisma.CVVersionUpdateManyWithWhereWithoutCrateInput[]
+  deleteMany?: Prisma.CVVersionScalarWhereInput | Prisma.CVVersionScalarWhereInput[]
+}
+
+export type CVVersionCreateWithoutCrateInput = {
+  id?: string
+  name: string
+  entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type CVVersionUncheckedCreateWithoutCrateInput = {
+  id?: string
+  name: string
+  entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type CVVersionCreateOrConnectWithoutCrateInput = {
+  where: Prisma.CVVersionWhereUniqueInput
+  create: Prisma.XOR<Prisma.CVVersionCreateWithoutCrateInput, Prisma.CVVersionUncheckedCreateWithoutCrateInput>
+}
+
+export type CVVersionCreateManyCrateInputEnvelope = {
+  data: Prisma.CVVersionCreateManyCrateInput | Prisma.CVVersionCreateManyCrateInput[]
+  skipDuplicates?: boolean
+}
+
+export type CVVersionUpsertWithWhereUniqueWithoutCrateInput = {
+  where: Prisma.CVVersionWhereUniqueInput
+  update: Prisma.XOR<Prisma.CVVersionUpdateWithoutCrateInput, Prisma.CVVersionUncheckedUpdateWithoutCrateInput>
+  create: Prisma.XOR<Prisma.CVVersionCreateWithoutCrateInput, Prisma.CVVersionUncheckedCreateWithoutCrateInput>
+}
+
+export type CVVersionUpdateWithWhereUniqueWithoutCrateInput = {
+  where: Prisma.CVVersionWhereUniqueInput
+  data: Prisma.XOR<Prisma.CVVersionUpdateWithoutCrateInput, Prisma.CVVersionUncheckedUpdateWithoutCrateInput>
+}
+
+export type CVVersionUpdateManyWithWhereWithoutCrateInput = {
+  where: Prisma.CVVersionScalarWhereInput
+  data: Prisma.XOR<Prisma.CVVersionUpdateManyMutationInput, Prisma.CVVersionUncheckedUpdateManyWithoutCrateInput>
+}
+
+export type CVVersionScalarWhereInput = {
+  AND?: Prisma.CVVersionScalarWhereInput | Prisma.CVVersionScalarWhereInput[]
+  OR?: Prisma.CVVersionScalarWhereInput[]
+  NOT?: Prisma.CVVersionScalarWhereInput | Prisma.CVVersionScalarWhereInput[]
+  id?: Prisma.StringFilter<"CVVersion"> | string
+  name?: Prisma.StringFilter<"CVVersion"> | string
+  crateId?: Prisma.StringNullableFilter<"CVVersion"> | string | null
+  entryIds?: Prisma.JsonFilter<"CVVersion">
+  sectionOrder?: Prisma.JsonFilter<"CVVersion">
+  skillOrder?: Prisma.JsonFilter<"CVVersion">
+  selectedSummaryId?: Prisma.StringNullableFilter<"CVVersion"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"CVVersion"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"CVVersion"> | Date | string
+}
+
+export type CVVersionCreateManyCrateInput = {
+  id?: string
+  name: string
+  entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type CVVersionUpdateWithoutCrateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type CVVersionUncheckedUpdateWithoutCrateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type CVVersionUncheckedUpdateManyWithoutCrateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  entryIds?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  sectionOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  skillOrder?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  selectedSummaryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -336,54 +541,78 @@ export type CVVersionMinOrderByAggregateInput = {
 export type CVVersionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  crateId?: boolean
   entryIds?: boolean
   sectionOrder?: boolean
   skillOrder?: boolean
+  selectedSummaryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  crate?: boolean | Prisma.CVVersion$crateArgs<ExtArgs>
 }, ExtArgs["result"]["cVVersion"]>
 
 export type CVVersionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  crateId?: boolean
   entryIds?: boolean
   sectionOrder?: boolean
   skillOrder?: boolean
+  selectedSummaryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  crate?: boolean | Prisma.CVVersion$crateArgs<ExtArgs>
 }, ExtArgs["result"]["cVVersion"]>
 
 export type CVVersionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  crateId?: boolean
   entryIds?: boolean
   sectionOrder?: boolean
   skillOrder?: boolean
+  selectedSummaryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  crate?: boolean | Prisma.CVVersion$crateArgs<ExtArgs>
 }, ExtArgs["result"]["cVVersion"]>
 
 export type CVVersionSelectScalar = {
   id?: boolean
   name?: boolean
+  crateId?: boolean
   entryIds?: boolean
   sectionOrder?: boolean
   skillOrder?: boolean
+  selectedSummaryId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CVVersionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "entryIds" | "sectionOrder" | "skillOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["cVVersion"]>
+export type CVVersionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "crateId" | "entryIds" | "sectionOrder" | "skillOrder" | "selectedSummaryId" | "createdAt" | "updatedAt", ExtArgs["result"]["cVVersion"]>
+export type CVVersionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  crate?: boolean | Prisma.CVVersion$crateArgs<ExtArgs>
+}
+export type CVVersionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  crate?: boolean | Prisma.CVVersion$crateArgs<ExtArgs>
+}
+export type CVVersionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  crate?: boolean | Prisma.CVVersion$crateArgs<ExtArgs>
+}
 
 export type $CVVersionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "CVVersion"
-  objects: {}
+  objects: {
+    crate: Prisma.$CratePayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    crateId: string | null
     entryIds: runtime.JsonValue
     sectionOrder: runtime.JsonValue
     skillOrder: runtime.JsonValue
+    selectedSummaryId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["cVVersion"]>
@@ -780,6 +1009,7 @@ readonly fields: CVVersionFieldRefs;
  */
 export interface Prisma__CVVersionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  crate<T extends Prisma.CVVersion$crateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CVVersion$crateArgs<ExtArgs>>): Prisma.Prisma__CrateClient<runtime.Types.Result.GetResult<Prisma.$CratePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -811,9 +1041,11 @@ export interface Prisma__CVVersionClient<T, Null = never, ExtArgs extends runtim
 export interface CVVersionFieldRefs {
   readonly id: Prisma.FieldRef<"CVVersion", 'String'>
   readonly name: Prisma.FieldRef<"CVVersion", 'String'>
+  readonly crateId: Prisma.FieldRef<"CVVersion", 'String'>
   readonly entryIds: Prisma.FieldRef<"CVVersion", 'Json'>
   readonly sectionOrder: Prisma.FieldRef<"CVVersion", 'Json'>
   readonly skillOrder: Prisma.FieldRef<"CVVersion", 'Json'>
+  readonly selectedSummaryId: Prisma.FieldRef<"CVVersion", 'String'>
   readonly createdAt: Prisma.FieldRef<"CVVersion", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CVVersion", 'DateTime'>
 }
@@ -833,6 +1065,10 @@ export type CVVersionFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
+  /**
    * Filter, which CVVersion to fetch.
    */
   where: Prisma.CVVersionWhereUniqueInput
@@ -851,6 +1087,10 @@ export type CVVersionFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensi
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
+  /**
    * Filter, which CVVersion to fetch.
    */
   where: Prisma.CVVersionWhereUniqueInput
@@ -868,6 +1108,10 @@ export type CVVersionFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the CVVersion
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
   /**
    * Filter, which CVVersion to fetch.
    */
@@ -917,6 +1161,10 @@ export type CVVersionFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensio
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
+  /**
    * Filter, which CVVersion to fetch.
    */
   where?: Prisma.CVVersionWhereInput
@@ -964,6 +1212,10 @@ export type CVVersionFindManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the CVVersion
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
   /**
    * Filter, which CVVersions to fetch.
    */
@@ -1013,6 +1265,10 @@ export type CVVersionCreateArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
+  /**
    * The data needed to create a CVVersion.
    */
   data: Prisma.XOR<Prisma.CVVersionCreateInput, Prisma.CVVersionUncheckedCreateInput>
@@ -1046,6 +1302,10 @@ export type CVVersionCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    */
   data: Prisma.CVVersionCreateManyInput | Prisma.CVVersionCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1060,6 +1320,10 @@ export type CVVersionUpdateArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the CVVersion
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
   /**
    * The data needed to update a CVVersion.
    */
@@ -1112,6 +1376,10 @@ export type CVVersionUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    * Limit how many CVVersions to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1126,6 +1394,10 @@ export type CVVersionUpsertArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Omit specific fields from the CVVersion
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
   /**
    * The filter to search for the CVVersion to update in case it exists.
    */
@@ -1153,6 +1425,10 @@ export type CVVersionDeleteArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
+  /**
    * Filter which CVVersion to delete.
    */
   where: Prisma.CVVersionWhereUniqueInput
@@ -1173,6 +1449,25 @@ export type CVVersionDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
+ * CVVersion.crate
+ */
+export type CVVersion$crateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Crate
+   */
+  select?: Prisma.CrateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Crate
+   */
+  omit?: Prisma.CrateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CrateInclude<ExtArgs> | null
+  where?: Prisma.CrateWhereInput
+}
+
+/**
  * CVVersion without action
  */
 export type CVVersionDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1184,4 +1479,8 @@ export type CVVersionDefaultArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Omit specific fields from the CVVersion
    */
   omit?: Prisma.CVVersionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CVVersionInclude<ExtArgs> | null
 }

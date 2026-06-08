@@ -30,7 +30,6 @@ export type ProfileMinAggregateOutputType = {
   phone: string | null
   email: string | null
   location: string | null
-  summary: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -41,7 +40,6 @@ export type ProfileMaxAggregateOutputType = {
   phone: string | null
   email: string | null
   location: string | null
-  summary: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,7 +51,6 @@ export type ProfileCountAggregateOutputType = {
   email: number
   location: number
   links: number
-  summary: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -66,7 +63,6 @@ export type ProfileMinAggregateInputType = {
   phone?: true
   email?: true
   location?: true
-  summary?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -77,7 +73,6 @@ export type ProfileMaxAggregateInputType = {
   phone?: true
   email?: true
   location?: true
-  summary?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -89,7 +84,6 @@ export type ProfileCountAggregateInputType = {
   email?: true
   location?: true
   links?: true
-  summary?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -174,7 +168,6 @@ export type ProfileGroupByOutputType = {
   email: string
   location: string
   links: runtime.JsonValue
-  summary: string
   createdAt: Date
   updatedAt: Date
   _count: ProfileCountAggregateOutputType | null
@@ -207,7 +200,6 @@ export type ProfileWhereInput = {
   email?: Prisma.StringFilter<"Profile"> | string
   location?: Prisma.StringFilter<"Profile"> | string
   links?: Prisma.JsonFilter<"Profile">
-  summary?: Prisma.StringFilter<"Profile"> | string
   createdAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
 }
@@ -219,7 +211,6 @@ export type ProfileOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   location?: Prisma.SortOrder
   links?: Prisma.SortOrder
-  summary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -234,7 +225,6 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   email?: Prisma.StringFilter<"Profile"> | string
   location?: Prisma.StringFilter<"Profile"> | string
   links?: Prisma.JsonFilter<"Profile">
-  summary?: Prisma.StringFilter<"Profile"> | string
   createdAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
 }, "id">
@@ -246,7 +236,6 @@ export type ProfileOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   location?: Prisma.SortOrder
   links?: Prisma.SortOrder
-  summary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProfileCountOrderByAggregateInput
@@ -264,7 +253,6 @@ export type ProfileScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   location?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   links?: Prisma.JsonWithAggregatesFilter<"Profile">
-  summary?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Profile"> | Date | string
 }
@@ -276,7 +264,6 @@ export type ProfileCreateInput = {
   email?: string
   location?: string
   links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  summary?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -288,7 +275,6 @@ export type ProfileUncheckedCreateInput = {
   email?: string
   location?: string
   links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  summary?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -300,7 +286,6 @@ export type ProfileUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.StringFieldUpdateOperationsInput | string
   links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  summary?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -312,7 +297,6 @@ export type ProfileUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.StringFieldUpdateOperationsInput | string
   links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  summary?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -324,7 +308,6 @@ export type ProfileCreateManyInput = {
   email?: string
   location?: string
   links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  summary?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -336,7 +319,6 @@ export type ProfileUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.StringFieldUpdateOperationsInput | string
   links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  summary?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -348,7 +330,6 @@ export type ProfileUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.StringFieldUpdateOperationsInput | string
   links?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  summary?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -360,7 +341,6 @@ export type ProfileCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   location?: Prisma.SortOrder
   links?: Prisma.SortOrder
-  summary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -371,7 +351,6 @@ export type ProfileMaxOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   location?: Prisma.SortOrder
-  summary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -382,7 +361,6 @@ export type ProfileMinOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   location?: Prisma.SortOrder
-  summary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -404,7 +382,6 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   email?: boolean
   location?: boolean
   links?: boolean
-  summary?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["profile"]>
@@ -416,7 +393,6 @@ export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   email?: boolean
   location?: boolean
   links?: boolean
-  summary?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["profile"]>
@@ -428,7 +404,6 @@ export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   email?: boolean
   location?: boolean
   links?: boolean
-  summary?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["profile"]>
@@ -440,12 +415,11 @@ export type ProfileSelectScalar = {
   email?: boolean
   location?: boolean
   links?: boolean
-  summary?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "location" | "links" | "summary" | "createdAt" | "updatedAt", ExtArgs["result"]["profile"]>
+export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "location" | "links" | "createdAt" | "updatedAt", ExtArgs["result"]["profile"]>
 
 export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Profile"
@@ -457,7 +431,6 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     email: string
     location: string
     links: runtime.JsonValue
-    summary: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["profile"]>
@@ -889,7 +862,6 @@ export interface ProfileFieldRefs {
   readonly email: Prisma.FieldRef<"Profile", 'String'>
   readonly location: Prisma.FieldRef<"Profile", 'String'>
   readonly links: Prisma.FieldRef<"Profile", 'Json'>
-  readonly summary: Prisma.FieldRef<"Profile", 'String'>
   readonly createdAt: Prisma.FieldRef<"Profile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Profile", 'DateTime'>
 }

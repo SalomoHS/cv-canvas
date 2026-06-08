@@ -19,7 +19,6 @@ interface CVData {
     email: string;
     location: string;
     links: { label: string; url: string }[];
-    summary: string;
   };
   entries: {
     id: string;
@@ -31,7 +30,13 @@ interface CVData {
     entryIds: string[];
     sectionOrder: Record<string, string[]>;
     skillOrder: string[];
+    selectedSummaryId?: string | null;
   };
+  summaries: {
+    id: string;
+    content: string;
+    isDefault: boolean;
+  }[];
 }
 
 const FONT = "Times New Roman";
@@ -212,9 +217,12 @@ export async function generateDocx(data: CVData): Promise<Uint8Array> {
   if (data.profile.links.length) children.push(linksLine(data.profile.links));
 
   // About Me
-  if (data.profile.summary) {
+  const selectedSummary = data.version.selectedSummaryId
+    ? data.summaries.find((s) => s.id === data.version.selectedSummaryId)
+    : data.summaries.find((s) => s.isDefault) ?? data.summaries[0];
+  if (selectedSummary) {
     children.push(sectionHeading("ABOUT ME"));
-    children.push(plainPara(data.profile.summary));
+    children.push(plainPara(selectedSummary.content));
   }
 
   // Education

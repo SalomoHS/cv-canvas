@@ -11,9 +11,11 @@ export async function POST(request: Request) {
   const version = await prisma.cVVersion.create({
     data: {
       name: body.name,
+      crateId: body.crateId ?? null,
       entryIds: body.entryIds ?? [],
       sectionOrder: body.sectionOrder ?? {},
       skillOrder: body.skillOrder ?? [],
+      selectedSummaryId: body.selectedSummaryId ?? null,
     },
   });
   return NextResponse.json(version, { status: 201 });

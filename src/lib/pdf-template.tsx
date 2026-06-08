@@ -123,7 +123,6 @@ interface PDFCVData {
     email: string;
     location: string;
     links: { label: string; url: string }[];
-    summary: string;
   };
   entries: {
     id: string;
@@ -135,7 +134,13 @@ interface PDFCVData {
     entryIds: string[];
     sectionOrder: Record<string, string[]>;
     skillOrder: string[];
+    selectedSummaryId?: string | null;
   };
+  summaries: {
+    id: string;
+    content: string;
+    isDefault: boolean;
+  }[];
 }
 
 function renderBullets(bullets: string[], italic = false) {
@@ -182,11 +187,14 @@ function ProfileSection({ data }: { data: PDFCVData }) {
 }
 
 function AboutMeSection({ data }: { data: PDFCVData }) {
-  if (!data.profile.summary) return null;
+  const selectedSummary = data.version.selectedSummaryId
+    ? data.summaries.find((s) => s.id === data.version.selectedSummaryId)
+    : data.summaries.find((s) => s.isDefault) ?? data.summaries[0];
+  if (!selectedSummary) return null;
   return (
     <View>
       <Text style={styles.sectionHeading}>ABOUT ME</Text>
-      <Text>{data.profile.summary}</Text>
+      <Text>{selectedSummary.content}</Text>
     </View>
   );
 }

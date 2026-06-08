@@ -5,7 +5,7 @@ export async function GET() {
   let profile = await prisma.profile.findFirst();
   if (!profile) {
     profile = await prisma.profile.create({
-      data: { name: "", phone: "", email: "", location: "", links: [], summary: "" },
+      data: { name: "", phone: "", email: "", location: "", links: [] },
     });
   }
   return NextResponse.json(profile);

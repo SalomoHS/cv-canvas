@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import type { Profile, Entry, CVVersion, SectionType, EntryStatus, ExperienceSubType, SectionData, Tab } from "@/lib/types";
+import type { Profile, Entry, CVVersion, Crate, SectionType, EntryStatus, ExperienceSubType, SectionData, Tab, Summary } from "@/lib/types";
 
 const API = {
   profile: {
@@ -21,15 +21,29 @@ const API = {
     put: (id: string, data: Partial<CVVersion>) => fetch(`/api/cv-versions/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then((r) => r.json()),
     delete: (id: string) => fetch(`/api/cv-versions/${id}`, { method: "DELETE" }).then((r) => r.json()),
   },
+  crates: {
+    get: () => fetch("/api/crates").then((r) => r.json()),
+    post: (data: Partial<Crate>) => fetch("/api/crates", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then((r) => r.json()),
+    put: (id: string, data: Partial<Crate>) => fetch(`/api/crates/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then((r) => r.json()),
+    delete: (id: string) => fetch(`/api/crates/${id}`, { method: "DELETE" }).then((r) => r.json()),
+  },
+  summaries: {
+    get: () => fetch("/api/summaries").then((r) => r.json()),
+    post: (data: Partial<Summary>) => fetch("/api/summaries", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then((r) => r.json()),
+    put: (id: string, data: Partial<Summary>) => fetch(`/api/summaries/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }).then((r) => r.json()),
+    delete: (id: string) => fetch(`/api/summaries/${id}`, { method: "DELETE" }).then((r) => r.json()),
+  },
 };
 
 interface StoreState {
   profile: Profile | null;
   entries: Entry[];
   cvVersions: CVVersion[];
+  crates: Crate[];
   activeVersionId: string | null;
   selectedEntryId: string | null;
   activeTab: Tab;
+  summaries: Summary[];
   loading: boolean;
   error: string | null;
   init: () => Promise<void>;
@@ -40,12 +54,18 @@ interface StoreState {
   updateEntry: (id: string, data: Partial<Entry>) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   setEntryStatus: (id: string, status: EntryStatus) => Promise<void>;
-  addVersion: (name: string) => Promise<void>;
+  addVersion: (name: string, crateId?: string) => Promise<void>;
   updateVersion: (id: string, data: Partial<CVVersion>) => Promise<void>;
   deleteVersion: (id: string) => Promise<void>;
   setActiveVersion: (id: string) => void;
   reorderEntries: (section: SectionType, entryIds: string[]) => Promise<void>;
   reorderSkills: (entryIds: string[]) => Promise<void>;
+  addCrate: (name: string) => Promise<Crate>;
+  deleteCrate: (id: string) => Promise<void>;
+  renameCrate: (id: string, name: string) => Promise<void>;
+  addSummary: (name: string, content: string) => Promise<Summary>;
+  updateSummary: (id: string, data: Partial<Summary>) => Promise<void>;
+  deleteSummary: (id: string) => Promise<void>;
   exportPDF: () => Promise<void>;
   exportDOCX: () => Promise<void>;
   exportJSON: () => Promise<void>;
@@ -56,29 +76,35 @@ export const useStore = create<StoreState>((set, get) => ({
   profile: null,
   entries: [],
   cvVersions: [],
+  crates: [],
   activeVersionId: null,
   selectedEntryId: null,
   activeTab: "preview" as Tab,
+  summaries: [],
   loading: false,
   error: null,
 
   init: async () => {
     set({ loading: true });
     try {
-      const [profile, entries, cvVersions] = await Promise.all([
+      const [profile, entries, cvVersions, crates, summaries] = await Promise.all([
         API.profile.get(),
         API.entries.get(),
         API.versions.get(),
+        API.crates.get(),
+        API.summaries.get(),
       ]);
       const activeVersionId = cvVersions.length > 0 ? cvVersions[0].id : null;
       set({
-        profile: { ...profile, links: profile.links ?? [], summary: profile.summary ?? "" },
+        profile: { ...profile, links: profile.links ?? [] },
         entries: entries.map((e: Record<string, unknown>) => ({
           ...e,
           createdAt: new Date(e.createdAt as string).getTime(),
           updatedAt: new Date(e.updatedAt as string).getTime(),
         })),
         cvVersions,
+        crates,
+        summaries,
         activeVersionId,
         loading: false,
       });
@@ -169,7 +195,7 @@ export const useStore = create<StoreState>((set, get) => ({
     }));
   },
 
-  addVersion: async (name) => {
+  addVersion: async (name, crateId) => {
     const entries = get().entries;
     const sections: SectionType[] = ["education", "experience", "project", "skill"];
     const sectionOrder = Object.fromEntries(
@@ -177,6 +203,7 @@ export const useStore = create<StoreState>((set, get) => ({
     ) as Record<SectionType, string[]>;
     const created = await API.versions.post({
       name,
+      crateId: crateId ?? null,
       entryIds: entries.map((e) => e.id),
       sectionOrder,
       skillOrder: entries.filter((e) => e.section === "skill").map((e) => e.id),
@@ -204,6 +231,25 @@ export const useStore = create<StoreState>((set, get) => ({
 
   setActiveVersion: (id) => set({ activeVersionId: id }),
 
+  addCrate: async (name) => {
+    const created = await API.crates.post({ name });
+    set((s) => ({ crates: [...s.crates, created] }));
+    return created;
+  },
+
+  deleteCrate: async (id) => {
+    await API.crates.delete(id);
+    set((s) => ({
+      crates: s.crates.filter((c) => c.id !== id),
+      cvVersions: s.cvVersions.map((v) => (v.crateId === id ? { ...v, crateId: null } : v)),
+    }));
+  },
+
+  renameCrate: async (id, name) => {
+    const updated = await API.crates.put(id, { name });
+    set((s) => ({ crates: s.crates.map((c) => (c.id === id ? { ...c, ...updated } : c)) }));
+  },
+
   setSelectedEntryId: (id) => set({ selectedEntryId: id }),
 
   setActiveTab: (tab) => set({ activeTab: tab }),
@@ -219,6 +265,24 @@ export const useStore = create<StoreState>((set, get) => ({
     const version = get().cvVersions.find((v) => v.id === get().activeVersionId);
     if (!version) return;
     await get().updateVersion(version.id, { skillOrder: entryIds });
+  },
+
+  addSummary: async (content) => {
+    const created = await API.summaries.post({ content, isDefault: false });
+    set((s) => ({ summaries: [...s.summaries, created] }));
+    return created;
+  },
+
+  updateSummary: async (id, data) => {
+    const updated = await API.summaries.put(id, data);
+    set((s) => ({
+      summaries: s.summaries.map((sum) => (sum.id === id ? { ...sum, ...updated } : sum)),
+    }));
+  },
+
+  deleteSummary: async (id) => {
+    await API.summaries.delete(id);
+    set((s) => ({ summaries: s.summaries.filter((sum) => sum.id !== id) }));
   },
 
   exportPDF: async () => {

@@ -4,6 +4,13 @@ export type ExperienceSubType = "professional" | "organizational";
 
 export type Link = { label: string; url: string };
 
+export type Summary = {
+  id: string;
+  name: string;
+  content: string;
+  isDefault: boolean;
+};
+
 export type Profile = {
   id?: string;
   name: string;
@@ -11,7 +18,8 @@ export type Profile = {
   email: string;
   location: string;
   links: Link[];
-  summary: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type EducationData = {
@@ -55,12 +63,20 @@ export type Entry = {
   updatedAt: number;
 };
 
+export type Crate = {
+  id: string;
+  name: string;
+  createdAt: string;
+};
+
 export type CVVersion = {
   id: string;
   name: string;
+  crateId: string | null;
   entryIds: string[];
   sectionOrder: Record<SectionType, string[]>;
   skillOrder: string[];
+  selectedSummaryId: string | null;
   createdAt: string;
 };
 
