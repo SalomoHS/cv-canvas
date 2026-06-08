@@ -95,6 +95,28 @@ export const useStore = create<StoreState>((set, get) => ({
     } as Partial<Entry>);
     const e: Entry = { ...created, createdAt: Date.now(), updatedAt: Date.now() };
     set((s) => ({ entries: [...s.entries, e] }));
+
+    const state = get();
+    const activeVersion = state.cvVersions.find((v) => v.id === state.activeVersionId);
+    if (activeVersion) {
+      const newSectionOrder = { ...activeVersion.sectionOrder };
+      const update: Record<string, unknown> = {};
+      if (entry.section === "skill") {
+        newSectionOrder.skill = [...(newSectionOrder.skill || []), e.id];
+        update.sectionOrder = newSectionOrder;
+        update.skillOrder = [...activeVersion.skillOrder, e.id];
+      } else {
+        newSectionOrder[entry.section] = [...(newSectionOrder[entry.section] || []), e.id];
+        update.sectionOrder = newSectionOrder;
+      }
+      const updated = await API.versions.put(activeVersion.id, update);
+      set((s) => ({
+        cvVersions: s.cvVersions.map((v) =>
+          v.id === activeVersion.id ? { ...v, ...updated } : v
+        ),
+      }));
+    }
+
     return e;
   },
 

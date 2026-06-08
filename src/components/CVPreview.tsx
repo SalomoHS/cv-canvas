@@ -31,13 +31,26 @@ export function CVPreview() {
     );
   }
 
-  const eduEntries = getSectionEntries(entries, "education", undefined, version.sectionOrder.education);
-  const profEntries = getSectionEntries(entries, "experience", "professional", version.sectionOrder.experience);
-  const orgEntries = getSectionEntries(entries, "experience", "organizational", version.sectionOrder.experience);
-  const projEntries = getSectionEntries(entries, "project", undefined, version.sectionOrder.project);
-  const skillEntries = (version.skillOrder ?? [])
-    .map((id) => entries.find((e) => e.id === id))
-    .filter((e): e is Entry => !!e && e.section === "skill");
+  const eduOrder = version.sectionOrder.education;
+  const expOrder = version.sectionOrder.experience;
+  const projOrder = version.sectionOrder.project;
+  const skillOrder = version.skillOrder;
+
+  const eduEntries = eduOrder?.length
+    ? getSectionEntries(entries, "education", undefined, eduOrder)
+    : entries.filter((e) => e.section === "education");
+  const profEntries = expOrder?.length
+    ? getSectionEntries(entries, "experience", "professional", expOrder)
+    : entries.filter((e) => e.section === "experience" && (e.subType ?? "professional") === "professional");
+  const orgEntries = expOrder?.length
+    ? getSectionEntries(entries, "experience", "organizational", expOrder)
+    : entries.filter((e) => e.section === "experience" && e.subType === "organizational");
+  const projEntries = projOrder?.length
+    ? getSectionEntries(entries, "project", undefined, projOrder)
+    : entries.filter((e) => e.section === "project");
+  const skillEntries = skillOrder?.length
+    ? skillOrder.map((id) => entries.find((e) => e.id === id)).filter((e): e is Entry => !!e && e.section === "skill")
+    : entries.filter((e) => e.section === "skill");
 
   const linkText = profile.links
     .filter((l) => l.label && l.url)

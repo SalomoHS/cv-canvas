@@ -13,7 +13,7 @@ Font.register({
 
 const styles = StyleSheet.create({
   page: {
-    padding: "1in",
+    padding: "0.5in",
     fontFamily: "Times New Roman",
     fontSize: 11,
     lineHeight: 1,
@@ -151,15 +151,13 @@ function renderBullets(bullets: string[], italic = false) {
   );
 }
 
-function getAllEntries(data: PDFCVData) {
-  const entryMap = new Map(data.entries.map((e) => [e.id, e]));
-  return data.version.entryIds.map((id) => entryMap.get(id)).filter(Boolean) as PDFCVData["entries"];
-}
-
 function getSectionEntries(data: PDFCVData, section: string) {
   const versionOrder = data.version.sectionOrder[section] || [];
   const entryMap = new Map(data.entries.map((e) => [e.id, e]));
-  return versionOrder.map((id) => entryMap.get(id)).filter(Boolean) as PDFCVData["entries"];
+  if (versionOrder.length > 0) {
+    return versionOrder.map((id) => entryMap.get(id)).filter(Boolean) as PDFCVData["entries"];
+  }
+  return data.entries.filter((e) => e.section === section);
 }
 
 function ProfileSection({ data }: { data: PDFCVData }) {
@@ -285,10 +283,11 @@ function ProjectsSection({ data }: { data: PDFCVData }) {
 }
 
 function SkillsSection({ data }: { data: PDFCVData }) {
-  const allEntries = getSectionEntries(data, "skill");
   const skillOrder = data.version.skillOrder || [];
   const entryMap = new Map(data.entries.map((e) => [e.id, e]));
-  const ordered = skillOrder.map((id) => entryMap.get(id)).filter(Boolean) as PDFCVData["entries"];
+  const ordered = skillOrder.length > 0
+    ? skillOrder.map((id) => entryMap.get(id)).filter(Boolean) as PDFCVData["entries"]
+    : data.entries.filter((e) => e.section === "skill");
   if (ordered.length === 0) return null;
   return (
     <View>

@@ -36,7 +36,7 @@ interface CVData {
 
 const FONT = "Times New Roman";
 const BASE_SIZE = 22; // 11pt in half-points
-const RIGHT_TAB = 9026; // A4 1in margin right tab in DXA
+const RIGHT_TAB = 10466; // A4 0.5in margin right tab in DXA
 
 function nameText(text: string): TextRun {
   return new TextRun({ text, bold: true, size: 28, font: FONT });
@@ -119,7 +119,10 @@ function entrySpacing(): Paragraph {
 function getSectionEntries(data: CVData, section: string) {
   const versionOrder = data.version.sectionOrder[section] || [];
   const entryMap = new Map(data.entries.map((e) => [e.id, e]));
-  return versionOrder.map((id) => entryMap.get(id)).filter(Boolean) as CVData["entries"];
+  if (versionOrder.length > 0) {
+    return versionOrder.map((id) => entryMap.get(id)).filter(Boolean) as CVData["entries"];
+  }
+  return data.entries.filter((e) => e.section === section);
 }
 
 function buildEducation(entry: CVData["entries"][0]): Paragraph[] {
@@ -243,9 +246,11 @@ export async function generateDocx(data: CVData): Promise<Uint8Array> {
   }
 
   // Skills
-  const skillEntries = data.version.skillOrder
-    .map((id) => data.entries.find((e) => e.id === id))
-    .filter(Boolean) as CVData["entries"];
+  const skillOrder = data.version.skillOrder || [];
+  const skillEntries = (skillOrder.length > 0
+    ? skillOrder.map((id) => data.entries.find((e) => e.id === id))
+    : data.entries.filter((e) => e.section === "skill")
+  ).filter(Boolean) as CVData["entries"];
   if (skillEntries.length) {
     children.push(sectionHeading("SKILLS"));
     for (const e of skillEntries) children.push(...buildSkill(e));
@@ -260,7 +265,19 @@ export async function generateDocx(data: CVData): Promise<Uint8Array> {
         },
       },
     },
-    sections: [{ children }],
+    sections: [{
+      properties: {
+        page: {
+          margin: {
+            top: 720,
+            right: 720,
+            bottom: 720,
+            left: 720,
+          },
+        },
+      },
+      children,
+    }],
   });
 
   return await Packer.toBuffer(doc);
