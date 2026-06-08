@@ -1,15 +1,8 @@
 "use client";
 
 import { useStore } from "@/store/useStore";
+import { EditToolbar } from "./EditToolbar";
 import type { Entry, SectionType } from "@/lib/types";
-
-const sections: { key: SectionType; label: string; filter?: string }[] = [
-  { key: "education", label: "Education" },
-  { key: "experience", label: "Professional Experience", filter: "professional" },
-  { key: "experience", label: "Organizational Experience", filter: "organizational" },
-  { key: "project", label: "Projects" },
-  { key: "skill", label: "Skills" },
-];
 
 function getSectionEntries(allEntries: Entry[], section: SectionType, subType?: string, order?: string[]) {
   const ordered = order ?? [];
@@ -56,8 +49,18 @@ export function CVPreview() {
 
   return (
     <div className="p-6">
-      <div className="mx-auto bg-white shadow-lg" style={{ width: "210mm", minHeight: "297mm", padding: "0.5in" }}>
-        <div style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: "11pt", color: "#000", lineHeight: 1.15 }}>
+      <EditToolbar />
+      <div
+        className="mx-auto bg-white shadow-lg"
+        style={{ width: "210mm", minHeight: "297mm", padding: "0.5in" }}
+        suppressContentEditableWarning
+      >
+        <div
+          contentEditable
+          suppressContentEditableWarning
+          className="outline-dashed outline-2 outline-blue-200 min-h-[200mm] cursor-text"
+          style={{ fontFamily: "'Times New Roman', Times, serif", fontSize: "11pt", color: "#000", lineHeight: 1.15 }}
+        >
           {/* Profile Header */}
           <div style={{ textAlign: "center", marginBottom: "6pt" }}>
             <div style={{ fontSize: "14pt", fontWeight: "bold" }}>{profile.name}</div>
