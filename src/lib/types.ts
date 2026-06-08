@@ -64,6 +64,8 @@ export type CVVersion = {
   createdAt: string;
 };
 
+export type Tab = "profile" | "education" | "experience" | "projects" | "skills" | "library" | "preview";
+
 export type Store = {
   profile: Profile;
   entries: Entry[];

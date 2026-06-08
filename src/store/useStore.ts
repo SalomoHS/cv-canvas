@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import type { Profile, Entry, CVVersion, SectionType, EntryStatus, ExperienceSubType, SectionData } from "@/lib/types";
+import type { Profile, Entry, CVVersion, SectionType, EntryStatus, ExperienceSubType, SectionData, Tab } from "@/lib/types";
 
 const API = {
   profile: {
@@ -28,9 +28,13 @@ interface StoreState {
   entries: Entry[];
   cvVersions: CVVersion[];
   activeVersionId: string | null;
+  selectedEntryId: string | null;
+  activeTab: Tab;
   loading: boolean;
   error: string | null;
   init: () => Promise<void>;
+  setSelectedEntryId: (id: string | null) => void;
+  setActiveTab: (tab: Tab) => void;
   setProfile: (profile: Profile) => Promise<void>;
   addEntry: (entry: { section: SectionType; subType?: ExperienceSubType; data: SectionData }) => Promise<Entry>;
   updateEntry: (id: string, data: Partial<Entry>) => Promise<void>;
@@ -53,6 +57,8 @@ export const useStore = create<StoreState>((set, get) => ({
   entries: [],
   cvVersions: [],
   activeVersionId: null,
+  selectedEntryId: null,
+  activeTab: "preview" as Tab,
   loading: false,
   error: null,
 
@@ -94,27 +100,41 @@ export const useStore = create<StoreState>((set, get) => ({
       data: entry.data,
     } as Partial<Entry>);
     const e: Entry = { ...created, createdAt: Date.now(), updatedAt: Date.now() };
-    set((s) => ({ entries: [...s.entries, e] }));
+
+    set((s) => {
+      const base = { entries: [...s.entries, e] };
+      const activeVersion = s.cvVersions.find((v) => v.id === s.activeVersionId);
+      if (!activeVersion) return base;
+
+      const newSectionOrder = { ...activeVersion.sectionOrder };
+      if (entry.section === "skill") {
+        newSectionOrder.skill = [...(newSectionOrder.skill || []), e.id];
+        return {
+          ...base,
+          cvVersions: s.cvVersions.map((v) =>
+            v.id === activeVersion.id
+              ? { ...v, sectionOrder: newSectionOrder, skillOrder: [...v.skillOrder, e.id] }
+              : v
+          ),
+        };
+      }
+      newSectionOrder[entry.section] = [...(newSectionOrder[entry.section] || []), e.id];
+      return {
+        ...base,
+        cvVersions: s.cvVersions.map((v) =>
+          v.id === activeVersion.id ? { ...v, sectionOrder: newSectionOrder } : v
+        ),
+      };
+    });
 
     const state = get();
     const activeVersion = state.cvVersions.find((v) => v.id === state.activeVersionId);
     if (activeVersion) {
-      const newSectionOrder = { ...activeVersion.sectionOrder };
-      const update: Record<string, unknown> = {};
+      const update: Record<string, unknown> = { sectionOrder: activeVersion.sectionOrder };
       if (entry.section === "skill") {
-        newSectionOrder.skill = [...(newSectionOrder.skill || []), e.id];
-        update.sectionOrder = newSectionOrder;
-        update.skillOrder = [...activeVersion.skillOrder, e.id];
-      } else {
-        newSectionOrder[entry.section] = [...(newSectionOrder[entry.section] || []), e.id];
-        update.sectionOrder = newSectionOrder;
+        update.skillOrder = activeVersion.skillOrder;
       }
-      const updated = await API.versions.put(activeVersion.id, update);
-      set((s) => ({
-        cvVersions: s.cvVersions.map((v) =>
-          v.id === activeVersion.id ? { ...v, ...updated } : v
-        ),
-      }));
+      await API.versions.put(activeVersion.id, update);
     }
 
     return e;
@@ -183,6 +203,10 @@ export const useStore = create<StoreState>((set, get) => ({
   },
 
   setActiveVersion: (id) => set({ activeVersionId: id }),
+
+  setSelectedEntryId: (id) => set({ selectedEntryId: id }),
+
+  setActiveTab: (tab) => set({ activeTab: tab }),
 
   reorderEntries: async (section, entryIds) => {
     const version = get().cvVersions.find((v) => v.id === get().activeVersionId);

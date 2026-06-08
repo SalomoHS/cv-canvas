@@ -1,8 +1,7 @@
 "use client";
 
 import { useStore } from "@/store/useStore";
-
-type Tab = "profile" | "education" | "experience" | "projects" | "skills" | "library" | "preview";
+import type { Tab } from "@/lib/types";
 
 const tabs: { id: Tab; label: string }[] = [
   { id: "profile", label: "Profile & About" },

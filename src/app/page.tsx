@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Sidebar, type Tab } from "@/components/Sidebar";
+import { useEffect } from "react";
+import { Sidebar } from "@/components/Sidebar";
 import { ProfileEditor } from "@/components/ProfileEditor";
 import { EducationEditor } from "@/components/EducationEditor";
 import { ExperienceEditor } from "@/components/ExperienceEditor";
@@ -13,8 +13,7 @@ import { useStore } from "@/store/useStore";
 import { Agentation } from "agentation";
 
 export default function Home() {
-  const { init, loading } = useStore();
-  const [activeTab, setActiveTab] = useState<Tab>("preview");
+  const { init, loading, activeTab, setActiveTab } = useStore();
 
   useEffect(() => {
     init();
@@ -42,10 +41,8 @@ export default function Home() {
         return <SkillEditor />;
       case "library":
         return <LibraryView />;
-      case "preview":
-        return <CVPreview />;
       default:
-        return <CVPreview />;
+        return null;
     }
   };
 

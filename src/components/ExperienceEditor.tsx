@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStore } from "@/store/useStore";
 import type { ExperienceSubType } from "@/lib/types";
 
 export function ExperienceEditor() {
-  const { entries, addEntry, updateEntry, deleteEntry } = useStore();
+  const { entries, addEntry, updateEntry, deleteEntry, selectedEntryId, setSelectedEntryId } = useStore();
   const expEntries = entries.filter((e) => e.section === "experience");
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -17,6 +17,12 @@ export function ExperienceEditor() {
     period: "",
     bullets: [""],
   });
+
+  useEffect(() => {
+    if (!selectedEntryId) return;
+    const entry = expEntries.find((e) => e.id === selectedEntryId);
+    if (entry) openEdit(entry);
+  }, [selectedEntryId]);
 
   const resetForm = () => {
     setForm({ role: "", organization: "", location: "", period: "", bullets: [""] });
@@ -49,8 +55,8 @@ export function ExperienceEditor() {
       await updateEntry(editingId, { data: data as Partial<typeof entries[0]["data"]>, subType } as Partial<typeof entries[0]>);
     } else {
       await addEntry({ section: "experience", subType, data });
+      resetForm();
     }
-    resetForm();
   };
 
   const remove = async (id: string) => {
@@ -125,8 +131,15 @@ export function ExperienceEditor() {
           {grouped[st].length === 0 && <p className="text-sm text-zinc-400">No entries</p>}
           {grouped[st].map((entry) => {
             const d = entry.data as { role: string; organization: string; period: string };
+            const isSelected = selectedEntryId === entry.id;
             return (
-              <div key={entry.id} className="border rounded p-3 flex justify-between items-start mb-2">
+              <div
+                key={entry.id}
+                draggable
+                onDragStart={(e) => { e.dataTransfer.setData("application/x-cv-add-entry-id", entry.id); e.dataTransfer.effectAllowed = "move"; }}
+                onClick={() => setSelectedEntryId(entry.id)}
+                className={`border rounded p-3 flex justify-between items-start mb-2 cursor-grab active:cursor-grabbing hover:bg-zinc-50 transition-colors ${isSelected ? "ring-2 ring-blue-400" : ""}`}
+              >
                 <div>
                   <p className="font-medium">{d.role}, {d.organization}</p>
                   <p className="text-sm text-zinc-600">{d.period}</p>

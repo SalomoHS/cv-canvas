@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStore } from "@/store/useStore";
 
 export function ProjectEditor() {
-  const { entries, addEntry, updateEntry, deleteEntry } = useStore();
+  const { entries, addEntry, updateEntry, deleteEntry, selectedEntryId, setSelectedEntryId } = useStore();
   const projEntries = entries.filter((e) => e.section === "project");
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -14,6 +14,12 @@ export function ProjectEditor() {
     year: "",
     bullets: [""],
   });
+
+  useEffect(() => {
+    if (!selectedEntryId) return;
+    const entry = projEntries.find((e) => e.id === selectedEntryId);
+    if (entry) openEdit(entry);
+  }, [selectedEntryId]);
 
   const resetForm = () => {
     setForm({ name: "", link: "", year: "", bullets: [""] });
@@ -42,8 +48,8 @@ export function ProjectEditor() {
       await updateEntry(editingId, { data } as Partial<typeof entries[0]>);
     } else {
       await addEntry({ section: "project", data });
+      resetForm();
     }
-    resetForm();
   };
 
   const remove = async (id: string) => {
@@ -96,8 +102,18 @@ export function ProjectEditor() {
       <div className="space-y-2">
         {projEntries.map((entry) => {
           const d = entry.data as { name: string; link?: string; year: string };
+          const isSelected = selectedEntryId === entry.id;
           return (
-            <div key={entry.id} className="border rounded p-3 flex justify-between items-start">
+            <div
+              key={entry.id}
+              draggable
+              onDragStart={(e) => {
+                e.dataTransfer.setData("application/x-cv-add-entry-id", entry.id);
+                e.dataTransfer.effectAllowed = "move";
+              }}
+              onClick={() => setSelectedEntryId(entry.id)}
+              className={`border rounded p-3 flex justify-between items-start cursor-grab active:cursor-grabbing hover:bg-zinc-50 transition-colors ${isSelected ? "ring-2 ring-blue-400" : ""}`}
+            >
               <div>
                 <p className="font-medium">{d.name}</p>
                 <p className="text-sm text-zinc-600">{d.year}{d.link ? ` | ${d.link}` : ""}</p>

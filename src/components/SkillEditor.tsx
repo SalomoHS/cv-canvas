@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStore } from "@/store/useStore";
 
 export function SkillEditor() {
-  const { entries, addEntry, updateEntry, deleteEntry } = useStore();
+  const { entries, addEntry, updateEntry, deleteEntry, selectedEntryId, setSelectedEntryId } = useStore();
   const skillEntries = entries.filter((e) => e.section === "skill");
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ category: "", items: [""] });
+
+  useEffect(() => {
+    if (!selectedEntryId) return;
+    const entry = skillEntries.find((e) => e.id === selectedEntryId);
+    if (entry) openEdit(entry);
+  }, [selectedEntryId]);
 
   const resetForm = () => {
     setForm({ category: "", items: [""] });
@@ -27,8 +33,8 @@ export function SkillEditor() {
       await updateEntry(editingId, { data } as Partial<typeof entries[0]>);
     } else {
       await addEntry({ section: "skill", data });
+      resetForm();
     }
-    resetForm();
   };
 
   const remove = async (id: string) => {
@@ -71,8 +77,15 @@ export function SkillEditor() {
       <div className="space-y-2">
         {skillEntries.map((entry) => {
           const d = entry.data as { category: string; items: string[] };
+          const isSelected = selectedEntryId === entry.id;
           return (
-            <div key={entry.id} className="border rounded p-3 flex justify-between items-start">
+            <div
+              key={entry.id}
+              draggable
+              onDragStart={(e) => { e.dataTransfer.setData("application/x-cv-add-entry-id", entry.id); e.dataTransfer.effectAllowed = "move"; }}
+              onClick={() => setSelectedEntryId(entry.id)}
+              className={`border rounded p-3 flex justify-between items-start cursor-grab active:cursor-grabbing hover:bg-zinc-50 transition-colors ${isSelected ? "ring-2 ring-blue-400" : ""}`}
+            >
               <div>
                 <p className="font-medium">{d.category}</p>
                 <p className="text-sm text-zinc-600">{d.items.join(", ")}</p>
