@@ -51,7 +51,12 @@ export default function Home() {
   return (
     <div className="flex min-h-screen">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
-      <main className="flex-1 overflow-y-auto bg-zinc-50">{renderContent()}</main>
+      <main className="flex-1 overflow-y-auto bg-zinc-50">
+        {activeTab !== "preview" ? renderContent() : <div className="p-6 text-zinc-500">Select a section from the sidebar to edit.</div>}
+      </main>
+      <aside className="w-[210mm] overflow-y-auto border-l border-zinc-200 bg-white shrink-0">
+        <CVPreview />
+      </aside>
     </div>
   );
 }
