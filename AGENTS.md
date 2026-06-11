@@ -88,6 +88,57 @@ All routes are under `src/app/api/`:
 6. **Experience has a discriminator** — `subType: "professional" | "organizational"` distinguishes the two experience types. Both share the same `ExperienceData` shape.
 7. **Export styling is fixed** — PDF and DOCX templates have hardcoded styling (Times New Roman, 11pt, A4, etc.). No customization by users.
 
+## File Structure
+
+```
+cv-canvas/
+├── prisma/                        # Schema & migrations
+│   ├── schema.prisma
+│   └── migrations/
+├── public/                        # Static assets (SVG icons)
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx             # Root layout
+│   │   ├── page.tsx               # Main page (app entry)
+│   │   ├── globals.css            # Global styles
+│   │   └── api/                   # RESTful API routes
+│   │       ├── profile/           #   GET/PUT /api/profile
+│   │       ├── entries/           #   GET/POST /api/entries, GET/PUT/PATCH/DELETE /api/entries/[id]
+│   │       ├── summaries/         #   GET/POST /api/summaries, GET/PUT/DELETE /api/summaries/[id]
+│   │       ├── cv-versions/       #   GET/POST /api/cv-versions, GET/PUT/DELETE /api/cv-versions/[id]
+│   │       ├── crates/            #   GET/POST /api/crates, GET/PUT/DELETE /api/crates/[id]
+│   │       ├── export/            #   POST /api/export/pdf, POST /api/export/docx
+│   │       └── backup/            #   GET/POST /api/backup
+│   ├── components/                # React components
+│   │   ├── Sidebar.tsx
+│   │   ├── ProfileEditor.tsx
+│   │   ├── EducationEditor.tsx
+│   │   ├── ExperienceEditor.tsx
+│   │   ├── ProjectEditor.tsx
+│   │   ├── SkillEditor.tsx
+│   │   ├── CVPreview.tsx
+│   │   ├── LibraryView.tsx
+│   │   ├── EditToolbar.tsx
+│   │   ├── Modal.tsx
+│   │   └── Modals.tsx
+│   ├── lib/                       # Utilities
+│   │   ├── prisma.ts              #   Prisma client singleton
+│   │   ├── types.ts               #   TypeScript types
+│   │   ├── pdf-template.tsx       #   PDF renderer template
+│   │   └── docx-template.ts       #   DOCX generator template
+│   ├── store/
+│   │   └── useStore.ts            # Zustand store (state + API calls)
+│   └── generated/
+│       └── prisma-client/         # Auto-generated Prisma client (custom output path)
+├── Dockerfile                     # Next.js standalone Docker image
+├── Dockerfile.migrate             # Migration runner image
+├── docker-compose.yml             # db + migrate + app services
+├── next.config.ts
+├── tsconfig.json
+├── package.json
+└── eslint.config.mjs
+```
+
 ## Available Skills
 
 These agent skills are configured for this project and can be invoked when relevant:
