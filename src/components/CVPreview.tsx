@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useMemo, memo, useCallback } from "react";
 import { useStore } from "@/store/useStore";
 import { EditToolbar } from "./EditToolbar";
+import { AddCVModal } from "./Modals";
 import type { Entry, SectionType } from "@/lib/types";
 
 function getSectionEntries(allEntries: Entry[], section: SectionType, subType?: string, order?: string[]) {
@@ -62,6 +63,7 @@ export function CVPreview() {
   const [dragOverEntryId, setDragOverEntryId] = useState<string | null>(null);
   const dragSourceRef = useRef<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [dragOverlay, setDragOverlay] = useState<{ visible: boolean; x: number; y: number }>({ visible: false, x: 0, y: 0 });
 
   const selectedSummary = useMemo(
@@ -144,8 +146,34 @@ export function CVPreview() {
 
   if (!profile || !version) {
     return (
-      <div className="p-8 text-sm text-text-muted">
-        {!profile ? "Loading profile..." : "No CV version selected. Create one from the sidebar."}
+      <div className="h-full flex flex-col items-center justify-center text-text-muted gap-4 p-8">
+        {!profile ? (
+          <p className="text-sm">Loading profile...</p>
+        ) : (
+          <>
+            <div className="flex flex-col items-center gap-2">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-text-muted/50">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+              <p className="text-sm">No CV version selected</p>
+            </div>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent rounded-lg hover:bg-accent-hover transition-colors cursor-pointer"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Create New CV
+            </button>
+            <AddCVModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} />
+          </>
+        )}
       </div>
     );
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useStore } from "@/store/useStore";
 import type { Tab } from "@/lib/types";
 import { AddCVModal, AddVersionModal, DeleteCVModal, DeleteVersionModal } from "./Modals";
@@ -54,6 +54,17 @@ export function Sidebar({
   const [deleteVersionModalOpen, setDeleteVersionModalOpen] = useState(false);
   const [deleteVersionId, setDeleteVersionId] = useState<string | undefined>();
   const [deleteVersionName, setDeleteVersionName] = useState<string | undefined>();
+
+  const knownCrateIds = useRef(new Set(crates.map((c) => c.id)));
+
+  useEffect(() => {
+    for (const crate of crates) {
+      if (!knownCrateIds.current.has(crate.id)) {
+        knownCrateIds.current.add(crate.id);
+        setExpandedCrates((prev) => new Set([...prev, crate.id]));
+      }
+    }
+  }, [crates]);
 
   const toggleCrate = (id: string) => {
     setExpandedCrates((prev) => {
