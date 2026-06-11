@@ -51,6 +51,17 @@ The PDF and DOCX export templates are designed to be **ATS-friendly**:
 This ensures your CV can be reliably parsed by applicant tracking systems while still looking polished for human readers.
 
 ## Install
+Clone the repository:
+
+```bash
+git clone https://github.com/isalo/cv-canvas.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd cv-canvas
+```
 
 Run the entire stack (app + PostgreSQL database) with Docker Compose.
 

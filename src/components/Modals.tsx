@@ -13,7 +13,7 @@ interface AddCVModalProps {
 export function AddCVModal({ isOpen, onClose, onCreated }: AddCVModalProps) {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { addCrate, addVersion } = useStore();
+  const { addCrate, addVersion, crates, setActiveTab } = useStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,11 +21,15 @@ export function AddCVModal({ isOpen, onClose, onCreated }: AddCVModalProps) {
 
     setIsLoading(true);
     try {
+      const wasEmpty = crates.length === 0;
       const crate = await addCrate(name.trim());
       await addVersion("Version 0", crate.id);
       setName("");
       onClose();
       onCreated?.(crate.id);
+      if (wasEmpty) {
+        setActiveTab("profile");
+      }
     } finally {
       setIsLoading(false);
     }
