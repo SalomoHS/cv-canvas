@@ -65,14 +65,10 @@ git clone https://github.com/isalo/cv-canvas.git
 cd cv-canvas
 ```
 
-- Create `.env` file. Environment variables are configured in [`.env.docker`](file:///c:\Users\isalo\Documents\Projects\cvvas\.env.docker):
+- Create `.env` file. Environment variables are configured below:
 
 ```.env.docker
 DATABASE_URL=postgresql://postgres:postgres@db:5432/cvvas
-```
-
-```bash
-copy .env.docker .env.local
 ```
 
 - Run the entire stack (app + PostgreSQL database) with Docker Compose.
