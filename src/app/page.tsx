@@ -9,7 +9,6 @@ import { ProjectEditor } from "@/components/ProjectEditor";
 import { SkillEditor } from "@/components/SkillEditor";
 import { CVPreview } from "@/components/CVPreview";
 import { useStore } from "@/store/useStore";
-import { Agentation } from "agentation";
 
 export default function Home() {
   const { init, loading, activeTab, setActiveTab } = useStore();
@@ -45,7 +44,6 @@ export default function Home() {
 
   return (
     <div className="flex w-full h-screen overflow-x-hidden bg-surface">
-      <Agentation />
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       {activeTab !== "preview" && (
         <main className="flex-1 overflow-y-auto">
