@@ -67,8 +67,8 @@ interface StoreState {
   addSummary: (name: string, content: string) => Promise<Summary>;
   updateSummary: (id: string, data: Partial<Summary>) => Promise<void>;
   deleteSummary: (id: string) => Promise<void>;
-  exportPDF: () => Promise<void>;
-  exportDOCX: () => Promise<void>;
+  exportPDF: (fileName?: string) => Promise<void>;
+  exportDOCX: (fileName?: string) => Promise<void>;
   exportJSON: () => Promise<void>;
   importJSON: (file: File) => Promise<void>;
 }
@@ -306,7 +306,7 @@ export const useStore = create<StoreState>((set, get) => ({
     set((s) => ({ summaries: s.summaries.filter((sum) => sum.id !== id) }));
   },
 
-  exportPDF: async () => {
+  exportPDF: async (fileName?: string) => {
     const versionId = get().activeVersionId;
     if (!versionId) return;
     const res = await fetch("/api/export/pdf", {
@@ -322,12 +322,12 @@ export const useStore = create<StoreState>((set, get) => ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "cv.pdf";
+    a.download = fileName ? `${fileName}.pdf` : "cv.pdf";
     a.click();
     URL.revokeObjectURL(url);
   },
 
-  exportDOCX: async () => {
+  exportDOCX: async (fileName?: string) => {
     const versionId = get().activeVersionId;
     if (!versionId) return;
     const res = await fetch("/api/export/docx", {
@@ -343,7 +343,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "cv.docx";
+    a.download = fileName ? `${fileName}.docx` : "cv.docx";
     a.click();
     URL.revokeObjectURL(url);
   },

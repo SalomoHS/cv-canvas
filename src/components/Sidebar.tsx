@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@/store/useStore";
 import type { Tab } from "@/lib/types";
-import { AddCVModal, AddVersionModal, DeleteCVModal, DeleteVersionModal } from "./Modals";
+import { AddCVModal, AddVersionModal, DeleteCVModal, DeleteVersionModal, ExportModal } from "./Modals";
 
 const tabs: { id: Tab; label: string; icon: string }[] = [
   { id: "profile", label: "Profile & About", icon: "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z" },
@@ -68,6 +68,8 @@ export function Sidebar({
   const [deleteVersionModalOpen, setDeleteVersionModalOpen] = useState(false);
   const [deleteVersionId, setDeleteVersionId] = useState<string | undefined>();
   const [deleteVersionName, setDeleteVersionName] = useState<string | undefined>();
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [exportType, setExportType] = useState<"pdf" | "docx">("pdf");
 
   const knownCrateIds = useRef(new Set(crates.map((c) => c.id)));
 
@@ -424,7 +426,10 @@ export function Sidebar({
       <div className="px-3 py-3 border-t border-border-light space-y-1">
         <p className="text-[10px] font-semibold tracking-widest uppercase text-text-muted px-2 mb-1.5">Export</p>
         <button
-          onClick={() => useStore.getState().exportPDF()}
+          onClick={() => {
+            setExportType("pdf");
+            setExportModalOpen(true);
+          }}
           disabled={!activeVersionId}
           className={`sidebar-link text-xs ${!activeVersionId ? "pointer-events-none opacity-40" : ""}`}
         >
@@ -432,7 +437,10 @@ export function Sidebar({
           Export PDF
         </button>
         <button
-          onClick={() => useStore.getState().exportDOCX()}
+          onClick={() => {
+            setExportType("docx");
+            setExportModalOpen(true);
+          }}
           disabled={!activeVersionId}
           className={`sidebar-link text-xs ${!activeVersionId ? "pointer-events-none opacity-40" : ""}`}
         >
@@ -461,6 +469,19 @@ export function Sidebar({
         onClose={() => setDeleteVersionModalOpen(false)}
         versionId={deleteVersionId}
         versionName={deleteVersionName}
+      />
+      <ExportModal
+        isOpen={exportModalOpen}
+        onClose={() => setExportModalOpen(false)}
+        defaultFileName={
+          (() => {
+            const version = cvVersions.find((v) => v.id === activeVersionId);
+            if (!version) return "cv";
+            const crate = crates.find((c) => c.id === version.crateId);
+            return crate ? `${crate.name} - ${version.name}` : version.name;
+          })()
+        }
+        exportType={exportType}
       />
     </aside>
   );

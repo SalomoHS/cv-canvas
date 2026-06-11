@@ -498,6 +498,101 @@ export function ConfirmDeleteModal({ isOpen, onClose, onConfirm, title, message 
   );
 }
 
+interface ExportModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  defaultFileName: string;
+  exportType: "pdf" | "docx";
+}
+
+export function ExportModal({ isOpen, onClose, defaultFileName, exportType }: ExportModalProps) {
+  const [fileName, setFileName] = useState(defaultFileName);
+  const [isLoading, setIsLoading] = useState(false);
+  const { exportPDF, exportDOCX } = useStore();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setFileName(defaultFileName);
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [isOpen, defaultFileName]);
+
+  const handleExport = async () => {
+    setIsLoading(true);
+    try {
+      const name = fileName.trim() || defaultFileName;
+      if (exportType === "pdf") {
+        await exportPDF(name);
+      } else {
+        await exportDOCX(name);
+      }
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`Export ${exportType.toUpperCase()}`}
+      footer={
+        <>
+          <button onClick={onClose} className="modal-btn-secondary">
+            Cancel
+          </button>
+          <button
+            onClick={handleExport}
+            disabled={!fileName.trim() || isLoading}
+            className="modal-btn-primary"
+          >
+            {isLoading ? (
+              <>
+                <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" strokeOpacity="0.25"/>
+                  <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/>
+                </svg>
+                Exporting...
+              </>
+            ) : (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Export {exportType.toUpperCase()}
+              </>
+            )}
+          </button>
+        </>
+      }
+    >
+      <form onSubmit={(e) => { e.preventDefault(); handleExport(); }} className="space-y-4">
+        <div>
+          <label htmlFor="export-filename" className="modal-label">
+            File Name
+          </label>
+          <input
+            ref={inputRef}
+            id="export-filename"
+            type="text"
+            value={fileName}
+            onChange={(e) => setFileName(e.target.value)}
+            placeholder={defaultFileName}
+            className="modal-input"
+          />
+          <p className="modal-hint">
+            The file will be saved as &quot;{fileName || defaultFileName}.{exportType}&quot;
+          </p>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
 export function DeleteVersionModal({ isOpen, onClose, versionId, versionName }: DeleteVersionModalProps) {
   const [confirmText, setConfirmText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
