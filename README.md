@@ -1,31 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CV Canvas — Curriculum Vitae Visual Authoring System
 
-## Getting Started
+CV Canvas is a web-based CV/resume builder that lets you create, manage, and export professional CVs with real-time preview. Write once, reuse across multiple versions, and export to PDF or DOCX.
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-```
+CV Canvas helps you manage your career profile through a library-based approach. You create entries for your education, experience, projects, and skills once, then assemble them into different CV versions — each tailored for a specific job or opportunity. Entries can be toggled between your library (drafts) and active versions, reordered with drag-and-drop, and organized into grouped collections called Crates.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Built with Next.js and PostgreSQL, CV Canvas runs locally via Docker.
 
-## Docker Deployment
+## Features
+
+- **Profile Management** — Store and edit your personal details, contact info, and social/portfolio links.
+- **Section Editors** — Dedicated editors for Education, Experience (professional & organizational), Projects, and Skills.
+- **Entry Library** — Maintain a reusable library of entries. Toggle each entry between "library" (draft) and active status per CV version.
+- **CV Versioning** — Create multiple named versions of your CV, each with its own set of entries and ordering.
+- **Crates** — Group related CV versions into Crates (e.g., by job type or industry) for better organization.
+- **Drag-and-Drop Reordering** — Reorder entries within sections and rearrange skill items with drag-and-drop.
+- **Real-Time Preview** — See your CV rendered as you edit, with live updates.
+- **Multiple Summaries** — Write and manage multiple professional summary/profile texts.
+- **Export** — Export any CV version as PDF or DOCX. Both formats use clean, ATS-friendly formatting (standard fonts, proper heading hierarchy, simple layouts) for maximum compatibility with applicant tracking systems.
+- **Backup & Restore** — Export your entire data as JSON and restore it later.
+- **Search & Sort** — Quickly find CV versions and Crates with search and sort controls.
+- **Docker Support** — Full Docker Compose setup with PostgreSQL for one-command startup.
+
+## CV Sections
+
+Each CV version is composed of the following sections, rendered in a clean, professional order:
+
+| Section | Description |
+|---------|-------------|
+| **Profile** | Personal details — name, phone, email, location, and social/portfolio links. |
+| **About Me** | One or more professional summary/profile texts; you can select which one to use per CV version. |
+| **Education** | Academic background — institution, degree, field of study, GPA, and relevant coursework. |
+| **Professional Experience** | Work history with role, organization, location, period, and bullet-point achievements. |
+| **Organizational Experience** | Non-professional experience (volunteer, clubs, committees) with the same structure as professional experience. |
+| **Projects** | Personal or academic projects with name, link, year, and bullet-point descriptions. |
+| **Skills** | Categorized technical skills (e.g., languages, frameworks, tools) organized into groups. |
+
+All sections (except Profile and About Me) use the **entry library** system — create entries once, then toggle them between library (draft) and active status per CV version. Entries can be reordered with drag-and-drop within each section.
+
+### ATS Compatibility
+
+The PDF and DOCX export templates are designed to be **ATS-friendly**:
+- **Standard fonts** — Times New Roman / Times-Roman at 11pt body, 14pt name
+- **Clean hierarchy** — Section headings with subtle bottom borders, consistent spacing
+- **Simple layouts** — Two-column format (content + dates) without tables or complex structures
+- **Proper bullet points** — Standard bullet characters that parse correctly
+- **Hyperlinks** — Standard inline links in DOCX, footnote-style in PDF
+
+This ensures your CV can be reliably parsed by applicant tracking systems while still looking polished for human readers.
+
+## Install
 
 Run the entire stack (app + PostgreSQL database) with Docker Compose.
 
-### Prerequisites
-
-- [Docker](https://docs.docker.com/get-docker/) installed
-- [Docker Compose](https://docs.docker.com/compose/install/) installed
-
-### Quick Start
-
 ```bash
-# Build and start all services
-docker compose up --build
-
-# Or start in detached mode
 docker compose up -d --build
 ```
 
@@ -49,32 +78,17 @@ docker compose build migrate
 docker compose run migrate
 ```
 
-### Managing the Stack
-
-```bash
-# View logs
-docker compose logs -f
-
-# Stop services
-docker compose down
-
-# Stop and remove volumes (fresh start)
-docker compose down -v
-
-# Rebuild after code changes
-docker compose up --build
-```
-
 ### Environment
 
-On first startup, the database migrations run automatically. The following environment variables are configured:
+Environment variables are configured in [`.env.docker`](file:///c:\Users\isalo\Documents\Projects\cvvas\.env.docker):
 
-| Variable | Value |
-|----------|-------|
-| DATABASE_URL | `postgresql://postgres:postgres@db:5432/cvvas` |
-| NODE_ENV | `production` |
+```.env.docker
+DATABASE_URL=postgresql://postgres:postgres@db:5432/cvvas
+```
 
-To customize, edit `docker-compose.yml` or mount your own `.env` file.
+```bash
+copy .env.docker .env.local
+```
 
 ### Resource Limits
 
@@ -82,30 +96,3 @@ The Docker Compose configuration is optimized for systems with 1 CPU and 2GB RAM
 
 - **App**: 1 CPU, 1.5GB RAM max
 - **Database**: 0.5 CPU, 512MB RAM max
-
-### Troubleshooting
-
-If the database tables don't exist on first run:
-
-```bash
-# Stop services and remove database volume
-docker compose down -v
-
-# Rebuild and start fresh
-docker compose up --build
-```
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
