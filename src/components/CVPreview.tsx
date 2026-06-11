@@ -156,6 +156,7 @@ export function CVPreview() {
   }
 
   function getOrder(section: SectionType): string[] {
+    if (!version) return [];
     if (section === "skill") return version.skillOrder;
     return version.sectionOrder[section] ?? [];
   }
@@ -163,6 +164,7 @@ export function CVPreview() {
   async function handleDrop(e: React.DragEvent, section: SectionType, targetEntryId?: string) {
     e.preventDefault();
     e.stopPropagation();
+    if (!version) return;
     const addId = e.dataTransfer.getData("application/x-cv-add-entry-id");
     const reorderId = e.dataTransfer.getData("application/x-cv-reorder-id");
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useStore } from "@/store/useStore";
 import type { Tab } from "@/lib/types";
+import { AddCVModal, AddVersionModal, DeleteCVModal, DeleteVersionModal } from "./Modals";
 
 const tabs: { id: Tab; label: string; icon: string }[] = [
   { id: "profile", label: "Profile & About", icon: "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z" },
@@ -31,10 +32,8 @@ export function Sidebar({
   const crates = useStore((s) => s.crates);
   const activeVersionId = useStore((s) => s.activeVersionId);
   const setActiveVersion = useStore((s) => s.setActiveVersion);
-  const addVersion = useStore((s) => s.addVersion);
   const deleteVersion = useStore((s) => s.deleteVersion);
   const renameVersion = useStore((s) => s.renameVersion);
-  const addCrate = useStore((s) => s.addCrate);
   const deleteCrate = useStore((s) => s.deleteCrate);
   const renameCrate = useStore((s) => s.renameCrate);
   const [expandedCrates, setExpandedCrates] = useState<Set<string>>(new Set(crates.map((c) => c.id)));
@@ -44,6 +43,17 @@ export function Sidebar({
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest" | "az" | "za">("newest");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+
+  // Modal states
+  const [addCVModalOpen, setAddCVModalOpen] = useState(false);
+  const [addVersionModalOpen, setAddVersionModalOpen] = useState(false);
+  const [addVersionCrateId, setAddVersionCrateId] = useState<string | undefined>();
+  const [deleteCVModalOpen, setDeleteCVModalOpen] = useState(false);
+  const [deleteCVId, setDeleteCVId] = useState<string | undefined>();
+  const [deleteCVName, setDeleteCVName] = useState<string | undefined>();
+  const [deleteVersionModalOpen, setDeleteVersionModalOpen] = useState(false);
+  const [deleteVersionId, setDeleteVersionId] = useState<string | undefined>();
+  const [deleteVersionName, setDeleteVersionName] = useState<string | undefined>();
 
   const toggleCrate = (id: string) => {
     setExpandedCrates((prev) => {
@@ -153,14 +163,7 @@ export function Sidebar({
 
         {/* New CV */}
         <button
-          onClick={async () => {
-            const name = prompt("Curriculum Vitae name:");
-            if (name) {
-              const crate = await addCrate(name);
-              setExpandedCrates((prev) => new Set([...prev, crate.id]));
-              await addVersion("Version 0", crate.id);
-            }
-          }}
+          onClick={() => setAddCVModalOpen(true)}
           className="btn-ghost w-full justify-start mb-1 text-xs"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -220,7 +223,9 @@ export function Sidebar({
                     </button>
                     <button
                       onClick={() => {
-                        if (confirm(`Delete Curriculum Vitae "${crate.name}" and uncategorize its versions?`)) deleteCrate(crate.id);
+                        setDeleteCVId(crate.id);
+                        setDeleteCVName(crate.name);
+                        setDeleteCVModalOpen(true);
                       }}
                       className="text-text-muted hover:text-danger p-0.5 rounded"
                     >
@@ -275,7 +280,9 @@ export function Sidebar({
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  if (confirm(`Delete version "${v.name}"?`)) deleteVersion(v.id);
+                                  setDeleteVersionId(v.id);
+                                  setDeleteVersionName(v.name);
+                                  setDeleteVersionModalOpen(true);
                                 }}
                                 className="text-text-muted hover:text-danger p-0.5 rounded"
                               >
@@ -288,8 +295,8 @@ export function Sidebar({
                     </div>
                     <button
                       onClick={() => {
-                        const name = prompt("Version name:");
-                        if (name) addVersion(name, crate.id);
+                        setAddVersionCrateId(crate.id);
+                        setAddVersionModalOpen(true);
                       }}
                       className="ml-4 pl-2 pr-2 py-1 text-xs text-text-muted hover:text-text-secondary flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
@@ -352,7 +359,9 @@ export function Sidebar({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (confirm(`Delete version "${v.name}"?`)) deleteVersion(v.id);
+                            setDeleteVersionId(v.id);
+                            setDeleteVersionName(v.name);
+                            setDeleteVersionModalOpen(true);
                           }}
                           className="text-text-muted hover:text-danger p-0.5 rounded"
                         >
@@ -402,6 +411,28 @@ export function Sidebar({
           Export DOCX
         </button>
       </div>
+
+      {/* Modals */}
+      <AddCVModal
+        isOpen={addCVModalOpen}
+        onClose={() => setAddCVModalOpen(false)}
+        onCreated={(crateId) => {
+          setExpandedCrates((prev) => new Set([...prev, crateId]));
+        }}
+      />
+      <AddVersionModal isOpen={addVersionModalOpen} onClose={() => setAddVersionModalOpen(false)} crateId={addVersionCrateId} />
+      <DeleteCVModal
+        isOpen={deleteCVModalOpen}
+        onClose={() => setDeleteCVModalOpen(false)}
+        crateId={deleteCVId}
+        crateName={deleteCVName}
+      />
+      <DeleteVersionModal
+        isOpen={deleteVersionModalOpen}
+        onClose={() => setDeleteVersionModalOpen(false)}
+        versionId={deleteVersionId}
+        versionName={deleteVersionName}
+      />
     </aside>
   );
 }

@@ -9,7 +9,6 @@ import { ProjectEditor } from "@/components/ProjectEditor";
 import { SkillEditor } from "@/components/SkillEditor";
 import { CVPreview } from "@/components/CVPreview";
 import { useStore } from "@/store/useStore";
-import { Agentation } from "agentation";
 
 export default function Home() {
   const { init, loading, activeTab, setActiveTab } = useStore();
@@ -52,7 +51,6 @@ export default function Home() {
         </main>
       )}
       <aside className={`${activeTab === "preview" ? "flex-1 min-w-0" : "w-[calc(210mm+3rem)] shrink-0"} overflow-auto bg-surface-raised`}>
-        <Agentation />
         <CVPreview />
       </aside>
     </div>
