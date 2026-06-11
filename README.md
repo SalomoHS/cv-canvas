@@ -96,3 +96,9 @@ The Docker Compose configuration is optimized for systems with 1 CPU and 2GB RAM
 
 - **App**: 1 CPU, 1.5GB RAM max
 - **Database**: 0.5 CPU, 512MB RAM max
+
+## Local Development with AI
+
+This project includes an [`AGENTS.md`](file:///c:\Users\isalo\Documents\Projects\cvvas\AGENTS.md) file that provides structured project context for AI-assisted development ("vibe coding"). It covers the project architecture, tech stack, coding conventions, database schema, API routes, and key rules to follow.
+
+When using AI coding tools locally, reference `AGENTS.md` to ensure the AI understands the project's specific patterns and avoids common pitfalls (e.g., using the correct Prisma client path, handling JSON columns properly, or respecting the fixed section order).
