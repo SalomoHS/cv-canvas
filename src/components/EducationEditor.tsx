@@ -1,11 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import { useStore } from "@/store/useStore";
 
-export function EducationEditor() {
-  const { entries, addEntry, updateEntry, deleteEntry, selectedEntryId, setSelectedEntryId } = useStore();
-  const eduEntries = entries.filter((e) => e.section === "education");
+export const EducationEditor = memo(function EducationEditor() {
+  const entries = useStore((s) => s.entries);
+  const addEntry = useStore((s) => s.addEntry);
+  const updateEntry = useStore((s) => s.updateEntry);
+  const deleteEntry = useStore((s) => s.deleteEntry);
+  const selectedEntryId = useStore((s) => s.selectedEntryId);
+  const setSelectedEntryId = useStore((s) => s.setSelectedEntryId);
+
+  const eduEntries = useMemo(
+    () => entries.filter((e) => e.section === "education"),
+    [entries]
+  );
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
@@ -149,4 +158,4 @@ export function EducationEditor() {
       </div>
     </div>
   );
-}
+});

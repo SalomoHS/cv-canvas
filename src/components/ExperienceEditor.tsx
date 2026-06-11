@@ -1,12 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import { useStore } from "@/store/useStore";
 import type { ExperienceSubType } from "@/lib/types";
 
-export function ExperienceEditor() {
-  const { entries, addEntry, updateEntry, deleteEntry, selectedEntryId, setSelectedEntryId } = useStore();
-  const expEntries = entries.filter((e) => e.section === "experience");
+export const ExperienceEditor = memo(function ExperienceEditor() {
+  const entries = useStore((s) => s.entries);
+  const addEntry = useStore((s) => s.addEntry);
+  const updateEntry = useStore((s) => s.updateEntry);
+  const deleteEntry = useStore((s) => s.deleteEntry);
+  const selectedEntryId = useStore((s) => s.selectedEntryId);
+  const setSelectedEntryId = useStore((s) => s.setSelectedEntryId);
+
+  const expEntries = useMemo(
+    () => entries.filter((e) => e.section === "experience"),
+    [entries]
+  );
+
+  const grouped = useMemo(() => ({
+    professional: expEntries.filter((e) => (e.subType ?? "professional") === "professional"),
+    organizational: expEntries.filter((e) => e.subType === "organizational"),
+  }), [expEntries]);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [subType, setSubType] = useState<ExperienceSubType>("professional");
@@ -62,11 +76,6 @@ export function ExperienceEditor() {
 
   const remove = async (id: string) => {
     if (confirm("Delete this experience entry?")) await deleteEntry(id);
-  };
-
-  const grouped = {
-    professional: expEntries.filter((e) => (e.subType ?? "professional") === "professional"),
-    organizational: expEntries.filter((e) => e.subType === "organizational"),
   };
 
   return (
@@ -166,4 +175,4 @@ export function ExperienceEditor() {
       ))}
     </div>
   );
-}
+});

@@ -20,7 +20,15 @@ export function Sidebar({
   activeTab: Tab;
   onTabChange: (tab: Tab) => void;
 }) {
-  const { cvVersions, crates, activeVersionId, setActiveVersion, addVersion, deleteVersion, addCrate, deleteCrate, renameCrate } = useStore();
+  const cvVersions = useStore((s) => s.cvVersions);
+  const crates = useStore((s) => s.crates);
+  const activeVersionId = useStore((s) => s.activeVersionId);
+  const setActiveVersion = useStore((s) => s.setActiveVersion);
+  const addVersion = useStore((s) => s.addVersion);
+  const deleteVersion = useStore((s) => s.deleteVersion);
+  const addCrate = useStore((s) => s.addCrate);
+  const deleteCrate = useStore((s) => s.deleteCrate);
+  const renameCrate = useStore((s) => s.renameCrate);
   const [expandedCrates, setExpandedCrates] = useState<Set<string>>(new Set(crates.map((c) => c.id)));
   const [renamingCrateId, setRenamingCrateId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");

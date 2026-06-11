@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, memo, useCallback } from "react";
 import { useStore } from "@/store/useStore";
 import { EditToolbar } from "./EditToolbar";
 import type { Entry, SectionType } from "@/lib/types";
@@ -13,22 +13,22 @@ function getSectionEntries(allEntries: Entry[], section: SectionType, subType?: 
     .filter((e): e is Entry => !!e && e.section === section && (!subType || (e.subType ?? "professional") === subType));
 }
 
-function SectionHeading({ text }: { text: string }) {
+const SectionHeading = memo(function SectionHeading({ text }: { text: string }) {
   return (
     <div style={{ marginTop: "10pt", marginBottom: "4pt" }}>
       <div style={{ fontWeight: "bold", fontSize: "11pt", textTransform: "uppercase" }}>{text}</div>
       <hr style={{ border: "none", borderTop: "1px solid #000", margin: 0 }} />
     </div>
   );
-}
+});
 
-function Placeholder() {
+const Placeholder = memo(function Placeholder() {
   return (
     <div style={{ color: "#aaa", fontStyle: "italic", marginLeft: "12pt" }}>
       No items added.
     </div>
   );
-}
+});
 
 type SectionEntry = {
   id: string;
@@ -44,8 +44,21 @@ const sectionToTab: Record<string, string> = {
 };
 
 export function CVPreview() {
-  const { profile, entries, cvVersions, activeVersionId, reorderEntries, updateVersion, selectedEntryId, setSelectedEntryId, setActiveTab, summaries } = useStore();
-  const maybeVersion = cvVersions.find((v) => v.id === activeVersionId);
+  const profile = useStore((s) => s.profile);
+  const entries = useStore((s) => s.entries);
+  const cvVersions = useStore((s) => s.cvVersions);
+  const activeVersionId = useStore((s) => s.activeVersionId);
+  const summaries = useStore((s) => s.summaries);
+  const selectedEntryId = useStore((s) => s.selectedEntryId);
+  const reorderEntries = useStore((s) => s.reorderEntries);
+  const updateVersion = useStore((s) => s.updateVersion);
+  const setSelectedEntryId = useStore((s) => s.setSelectedEntryId);
+  const setActiveTab = useStore((s) => s.setActiveTab);
+
+  const maybeVersion = useMemo(
+    () => cvVersions.find((v) => v.id === activeVersionId),
+    [cvVersions, activeVersionId]
+  );
   const [dragOverEntryId, setDragOverEntryId] = useState<string | null>(null);
   const dragSourceRef = useRef<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -55,25 +68,26 @@ export function CVPreview() {
     setDragOverEntryId(null);
   }, [activeVersionId]);
 
+  // Memoize drag handlers
+  const handleDragOver = useCallback((e: DragEvent) => {
+    if (!dragSourceRef.current) return;
+    const previewEl = previewRef.current;
+    const isOutside = previewEl ? !previewEl.contains(e.target as Node) : true;
+    setDragOverlay({ visible: isOutside, x: e.clientX + 16, y: e.clientY + 16 });
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setDragOverlay({ visible: false, x: 0, y: 0 });
+  }, []);
+
   useEffect(() => {
-    const handleDragOver = (e: DragEvent) => {
-      if (!dragSourceRef.current) return;
-      const previewEl = previewRef.current;
-      const isOutside = previewEl ? !previewEl.contains(e.target as Node) : true;
-      setDragOverlay({ visible: isOutside, x: e.clientX + 16, y: e.clientY + 16 });
-    };
-
-    const handleDragEnd = () => {
-      setDragOverlay({ visible: false, x: 0, y: 0 });
-    };
-
     document.addEventListener("dragover", handleDragOver);
     document.addEventListener("dragend", handleDragEnd);
     return () => {
       document.removeEventListener("dragover", handleDragOver);
       document.removeEventListener("dragend", handleDragEnd);
     };
-  }, []);
+  }, [handleDragOver, handleDragEnd]);
 
   if (!profile || !maybeVersion) {
     return (
@@ -83,32 +97,57 @@ export function CVPreview() {
     );
   }
   const version = maybeVersion;
-  const selectedSummary = version.selectedSummaryId
-    ? summaries.find((s) => s.id === version.selectedSummaryId)
-    : summaries.find((s) => s.isDefault) ?? summaries[0];
+  const selectedSummary = useMemo(
+    () => version.selectedSummaryId
+      ? summaries.find((s) => s.id === version.selectedSummaryId)
+      : summaries.find((s) => s.isDefault) ?? summaries[0],
+    [version.selectedSummaryId, summaries]
+  );
+
+  const validLinks = useMemo(
+    () => profile.links.filter((l) => l.label && l.url),
+    [profile.links]
+  );
 
   const eduOrder = version.sectionOrder.education;
   const expOrder = version.sectionOrder.experience;
   const projOrder = version.sectionOrder.project;
   const skillOrder = version.skillOrder;
 
-  const eduEntries = eduOrder !== undefined
-    ? getSectionEntries(entries, "education", undefined, eduOrder)
-    : entries.filter((e) => e.section === "education");
-  const profEntries = expOrder !== undefined
-    ? getSectionEntries(entries, "experience", "professional", expOrder)
-    : entries.filter((e) => e.section === "experience" && (e.subType ?? "professional") === "professional");
-  const orgEntries = expOrder !== undefined
-    ? getSectionEntries(entries, "experience", "organizational", expOrder)
-    : entries.filter((e) => e.section === "experience" && e.subType === "organizational");
-  const projEntries = projOrder !== undefined
-    ? getSectionEntries(entries, "project", undefined, projOrder)
-    : entries.filter((e) => e.section === "project");
-  const skillEntries = skillOrder !== undefined
-    ? skillOrder.map((id) => entries.find((e) => e.id === id)).filter((e): e is Entry => !!e && e.section === "skill")
-    : entries.filter((e) => e.section === "skill");
+  const eduEntries = useMemo(
+    () => eduOrder !== undefined
+      ? getSectionEntries(entries, "education", undefined, eduOrder)
+      : entries.filter((e) => e.section === "education"),
+    [entries, eduOrder]
+  );
 
-  const validLinks = profile.links.filter((l) => l.label && l.url);
+  const profEntries = useMemo(
+    () => expOrder !== undefined
+      ? getSectionEntries(entries, "experience", "professional", expOrder)
+      : entries.filter((e) => e.section === "experience" && (e.subType ?? "professional") === "professional"),
+    [entries, expOrder]
+  );
+
+  const orgEntries = useMemo(
+    () => expOrder !== undefined
+      ? getSectionEntries(entries, "experience", "organizational", expOrder)
+      : entries.filter((e) => e.section === "experience" && e.subType === "organizational"),
+    [entries, expOrder]
+  );
+
+  const projEntries = useMemo(
+    () => projOrder !== undefined
+      ? getSectionEntries(entries, "project", undefined, projOrder)
+      : entries.filter((e) => e.section === "project"),
+    [entries, projOrder]
+  );
+
+  const skillEntries = useMemo(
+    () => skillOrder !== undefined
+      ? skillOrder.map((id) => entries.find((e) => e.id === id)).filter((e): e is Entry => !!e && e.section === "skill")
+      : entries.filter((e) => e.section === "skill"),
+    [entries, skillOrder]
+  );
 
   function canDrop(e: React.DragEvent) {
     return e.dataTransfer.types.includes("application/x-cv-add-entry-id") ||
@@ -515,52 +554,18 @@ function SectionSection({
         const isDragOver = dragOverEntryId === entry.id;
         const isSelected = selectedEntryId === entry.id;
         return (
-          <div
+          <EntryRow
             key={entry.id}
-            contentEditable={!!isSelected}
-            suppressContentEditableWarning
-            style={{
-              marginBottom: "6pt",
-              padding: "2pt 2pt 2pt 0",
-              backgroundColor: isDragOver ? "#dbeafe" : isSelected ? "#f0f7ff" : "transparent",
-              outline: isDragOver ? "2px dashed #3b82f6" : isSelected ? "2px solid #3b82f6" : "none",
-              outlineOffset: isDragOver ? "1px" : "0",
-              borderRadius: isDragOver ? "2px" : "0",
-              transition: "background-color 0.15s",
-            }}
-            onBeforeInput={(e) => {
-              if (!isSelected) return;
-              e.preventDefault();
-            }}
-            onKeyDown={(e) => {
-              if (!isSelected) return;
-              e.preventDefault();
-            }}
-            onDragOver={(e) => {
-              if (canDrop(e)) {
-                e.preventDefault();
-                e.stopPropagation();
-                setDragOverEntryId(entry.id);
-              }
-            }}
-            onDragLeave={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-                setDragOverEntryId(null);
-              }
-            }}
-            onDrop={(e) => handleDrop(e, sectionType, entry.id)}
-          >
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "4pt" }}>
-              {makeDragHandle(entry.id, sectionType)}
-              <div
-                style={{ flex: 1, minWidth: 0, cursor: "text" }}
-                onClick={() => onEntryClick(entry.id)}
-              >
-                {entry.content}
-                {entry.extra}
-              </div>
-            </div>
-          </div>
+            entry={entry}
+            isDragOver={isDragOver}
+            isSelected={isSelected}
+            sectionType={sectionType}
+            makeDragHandle={makeDragHandle}
+            onEntryClick={onEntryClick}
+            canDrop={canDrop}
+            setDragOverEntryId={setDragOverEntryId}
+            handleDrop={handleDrop}
+          />
         );
       }) : (
         <div
@@ -588,3 +593,73 @@ function SectionSection({
     </div>
   );
 }
+
+const EntryRow = memo(function EntryRow({
+  entry,
+  isDragOver,
+  isSelected,
+  sectionType,
+  makeDragHandle,
+  onEntryClick,
+  canDrop,
+  setDragOverEntryId,
+  handleDrop,
+}: {
+  entry: SectionEntry;
+  isDragOver: boolean;
+  isSelected: boolean;
+  sectionType: SectionType;
+  makeDragHandle: (entryId: string, section: SectionType) => React.ReactNode;
+  onEntryClick: (entryId: string) => void;
+  canDrop: (e: React.DragEvent) => boolean;
+  setDragOverEntryId: (id: string | null) => void;
+  handleDrop: (e: React.DragEvent, section: SectionType, targetEntryId?: string) => Promise<void>;
+}) {
+  return (
+    <div
+      contentEditable={!!isSelected}
+      suppressContentEditableWarning
+      style={{
+        marginBottom: "6pt",
+        padding: "2pt 2pt 2pt 0",
+        backgroundColor: isDragOver ? "#dbeafe" : isSelected ? "#f0f7ff" : "transparent",
+        outline: isDragOver ? "2px dashed #3b82f6" : isSelected ? "2px solid #3b82f6" : "none",
+        outlineOffset: isDragOver ? "1px" : "0",
+        borderRadius: isDragOver ? "2px" : "0",
+        transition: "background-color 0.15s",
+      }}
+      onBeforeInput={(e) => {
+        if (!isSelected) return;
+        e.preventDefault();
+      }}
+      onKeyDown={(e) => {
+        if (!isSelected) return;
+        e.preventDefault();
+      }}
+      onDragOver={(e) => {
+        if (canDrop(e)) {
+          e.preventDefault();
+          e.stopPropagation();
+          setDragOverEntryId(entry.id);
+        }
+      }}
+      onDragLeave={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          setDragOverEntryId(null);
+        }
+      }}
+      onDrop={(e) => handleDrop(e, sectionType, entry.id)}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "4pt" }}>
+        {makeDragHandle(entry.id, sectionType)}
+        <div
+          style={{ flex: 1, minWidth: 0, cursor: "text" }}
+          onClick={() => onEntryClick(entry.id)}
+        >
+          {entry.content}
+          {entry.extra}
+        </div>
+      </div>
+    </div>
+  );
+});

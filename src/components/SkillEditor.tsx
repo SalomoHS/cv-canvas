@@ -1,11 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import { useStore } from "@/store/useStore";
 
-export function SkillEditor() {
-  const { entries, addEntry, updateEntry, deleteEntry, selectedEntryId, setSelectedEntryId } = useStore();
-  const skillEntries = entries.filter((e) => e.section === "skill");
+export const SkillEditor = memo(function SkillEditor() {
+  const entries = useStore((s) => s.entries);
+  const addEntry = useStore((s) => s.addEntry);
+  const updateEntry = useStore((s) => s.updateEntry);
+  const deleteEntry = useStore((s) => s.deleteEntry);
+  const selectedEntryId = useStore((s) => s.selectedEntryId);
+  const setSelectedEntryId = useStore((s) => s.setSelectedEntryId);
+
+  const skillEntries = useMemo(
+    () => entries.filter((e) => e.section === "skill"),
+    [entries]
+  );
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ category: "", items: [""] });
@@ -109,4 +118,4 @@ export function SkillEditor() {
       </div>
     </div>
   );
-}
+});

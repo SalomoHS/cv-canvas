@@ -1,10 +1,18 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback, memo } from "react";
 import { useStore } from "@/store/useStore";
 
-export function ProfileEditor() {
-  const { profile, setProfile, summaries, addSummary, updateSummary, deleteSummary, cvVersions, activeVersionId, updateVersion } = useStore();
+export const ProfileEditor = memo(function ProfileEditor() {
+  const profile = useStore((s) => s.profile);
+  const setProfile = useStore((s) => s.setProfile);
+  const summaries = useStore((s) => s.summaries);
+  const addSummary = useStore((s) => s.addSummary);
+  const updateSummary = useStore((s) => s.updateSummary);
+  const deleteSummary = useStore((s) => s.deleteSummary);
+  const cvVersions = useStore((s) => s.cvVersions);
+  const activeVersionId = useStore((s) => s.activeVersionId);
+  const updateVersion = useStore((s) => s.updateVersion);
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -25,11 +33,19 @@ export function ProfileEditor() {
     }
   }, [profile]);
 
+  // Debounced profile update
+  const debouncedSetProfile = useMemo(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return (formData: typeof form) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => setProfile(formData), 400);
+    };
+  }, [setProfile]);
+
   useEffect(() => {
     if (isInitial.current) return;
-    const timer = setTimeout(() => setProfile(form), 400);
-    return () => clearTimeout(timer);
-  }, [form]);
+    debouncedSetProfile(form);
+  }, [form, debouncedSetProfile]);
 
   if (!profile) return <div className="p-6 text-text-muted">Loading...</div>;
 
@@ -212,4 +228,4 @@ export function ProfileEditor() {
       </div>
     </div>
   );
-}
+});
