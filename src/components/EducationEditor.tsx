@@ -51,6 +51,8 @@ export const EducationEditor = memo(function EducationEditor() {
     setEditingId(entry.id);
   };
 
+  const isFormValid = form.institution.trim() && form.degree.trim() && form.field.trim() && form.period.trim();
+
   const save = async () => {
     const data = {
       institution: form.institution,
@@ -121,7 +123,7 @@ export const EducationEditor = memo(function EducationEditor() {
           </button>
         </div>
         <div className="flex gap-2 pt-1">
-          <button onClick={save} className="btn-primary">
+          <button onClick={save} className="btn-primary" disabled={!isFormValid}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             {editingId ? "Update" : "Add"} Entry
           </button>
