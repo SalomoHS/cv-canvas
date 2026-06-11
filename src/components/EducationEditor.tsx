@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useMemo, memo, useCallback } from "react";
 import { useStore } from "@/store/useStore";
+import { ConfirmDeleteModal } from "./Modals";
 
 export const EducationEditor = memo(function EducationEditor() {
   const entries = useStore((s) => s.entries);
@@ -17,6 +18,7 @@ export const EducationEditor = memo(function EducationEditor() {
   );
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [form, setForm] = useState({
     institution: "",
     degree: "",
@@ -74,9 +76,16 @@ export const EducationEditor = memo(function EducationEditor() {
     }
   };
 
-  const remove = async (id: string) => {
-    if (confirm("Delete this education entry?")) await deleteEntry(id);
+  const remove = (id: string) => {
+    setDeleteTargetId(id);
   };
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (deleteTargetId) {
+      await deleteEntry(deleteTargetId);
+      setDeleteTargetId(null);
+    }
+  }, [deleteTargetId, deleteEntry]);
 
   return (
     <div className="p-6 max-w-2xl space-y-6 animate-fade-in" onClick={() => setSelectedEntryId(null)}>
@@ -86,7 +95,7 @@ export const EducationEditor = memo(function EducationEditor() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Institution</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.institution} onChange={(e) => setForm({ ...form, institution: e.target.value })} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="University of Example" value={form.institution} onChange={(e) => setForm({ ...form, institution: e.target.value })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Period</label>
@@ -94,11 +103,11 @@ export const EducationEditor = memo(function EducationEditor() {
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Degree</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.degree} onChange={(e) => setForm({ ...form, degree: e.target.value })} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="Bachelor of Science" value={form.degree} onChange={(e) => setForm({ ...form, degree: e.target.value })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Field</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.field} onChange={(e) => setForm({ ...form, field: e.target.value })} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="Computer Science" value={form.field} onChange={(e) => setForm({ ...form, field: e.target.value })} />
           </div>
         </div>
         <div>
@@ -109,7 +118,7 @@ export const EducationEditor = memo(function EducationEditor() {
           <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Related Modules</label>
           {form.relatedModules.map((mod, i) => (
             <div key={i} className="flex gap-2 mb-1.5">
-              <input className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={mod} onChange={(e) => {
+              <input className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="e.g. Data Structures" value={mod} onChange={(e) => {
                 const copy = [...form.relatedModules];
                 copy[i] = e.target.value;
                 setForm({ ...form, relatedModules: copy });
@@ -162,6 +171,14 @@ export const EducationEditor = memo(function EducationEditor() {
           );
         })}
       </div>
+
+      <ConfirmDeleteModal
+        isOpen={deleteTargetId !== null}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Education Entry"
+        message="This education entry will be permanently deleted."
+      />
     </div>
   );
 });

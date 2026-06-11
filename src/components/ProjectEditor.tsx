@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useMemo, memo, useCallback } from "react";
 import { useStore } from "@/store/useStore";
+import { ConfirmDeleteModal } from "./Modals";
 
 export const ProjectEditor = memo(function ProjectEditor() {
   const entries = useStore((s) => s.entries);
@@ -17,6 +18,7 @@ export const ProjectEditor = memo(function ProjectEditor() {
   );
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
     link: "",
@@ -68,9 +70,16 @@ export const ProjectEditor = memo(function ProjectEditor() {
     }
   };
 
-  const remove = async (id: string) => {
-    if (confirm("Delete this project?")) await deleteEntry(id);
+  const remove = (id: string) => {
+    setDeleteTargetId(id);
   };
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (deleteTargetId) {
+      await deleteEntry(deleteTargetId);
+      setDeleteTargetId(null);
+    }
+  }, [deleteTargetId, deleteEntry]);
 
   return (
     <div className="p-6 max-w-2xl space-y-6 animate-fade-in" onClick={() => setSelectedEntryId(null)}>
@@ -80,7 +89,7 @@ export const ProjectEditor = memo(function ProjectEditor() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Project Name</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="My Awesome Project" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Year</label>
@@ -95,7 +104,7 @@ export const ProjectEditor = memo(function ProjectEditor() {
           <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Bullets</label>
           {form.bullets.map((b, i) => (
             <div key={i} className="flex gap-2 mb-1.5">
-              <input className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={b} onChange={(e) => {
+              <input className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="Built a full-stack web app..." value={b} onChange={(e) => {
                 const copy = [...form.bullets];
                 copy[i] = e.target.value;
                 setForm({ ...form, bullets: copy });
@@ -150,6 +159,14 @@ export const ProjectEditor = memo(function ProjectEditor() {
           );
         })}
       </div>
+
+      <ConfirmDeleteModal
+        isOpen={deleteTargetId !== null}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Project"
+        message="This project will be permanently deleted."
+      />
     </div>
   );
 });

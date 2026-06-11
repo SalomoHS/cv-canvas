@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useMemo, memo, useCallback } from "react";
 import { useStore } from "@/store/useStore";
+import { ConfirmDeleteModal } from "./Modals";
 
 export const SkillEditor = memo(function SkillEditor() {
   const entries = useStore((s) => s.entries);
@@ -17,6 +18,7 @@ export const SkillEditor = memo(function SkillEditor() {
   );
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [form, setForm] = useState({ category: "", items: [""] });
 
   useEffect(() => {
@@ -53,9 +55,16 @@ export const SkillEditor = memo(function SkillEditor() {
     }
   };
 
-  const remove = async (id: string) => {
-    if (confirm("Delete this skill category?")) await deleteEntry(id);
+  const remove = (id: string) => {
+    setDeleteTargetId(id);
   };
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (deleteTargetId) {
+      await deleteEntry(deleteTargetId);
+      setDeleteTargetId(null);
+    }
+  }, [deleteTargetId, deleteEntry]);
 
   return (
     <div className="p-6 max-w-2xl space-y-6 animate-fade-in" onClick={() => setSelectedEntryId(null)}>
@@ -70,7 +79,7 @@ export const SkillEditor = memo(function SkillEditor() {
           <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Skills</label>
           {form.items.map((item, i) => (
             <div key={i} className="flex gap-2 mb-1.5">
-              <input className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={item} onChange={(e) => {
+              <input className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="e.g. JavaScript" value={item} onChange={(e) => {
                 const copy = [...form.items];
                 copy[i] = e.target.value;
                 setForm({ ...form, items: copy });
@@ -122,6 +131,14 @@ export const SkillEditor = memo(function SkillEditor() {
           );
         })}
       </div>
+
+      <ConfirmDeleteModal
+        isOpen={deleteTargetId !== null}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Skill Category"
+        message="This skill category will be permanently deleted."
+      />
     </div>
   );
 });

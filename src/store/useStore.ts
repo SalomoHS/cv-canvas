@@ -278,7 +278,19 @@ export const useStore = create<StoreState>((set, get) => ({
 
   addSummary: async (name, content) => {
     const created = await API.summaries.post({ name, content, isDefault: false });
-    set((s) => ({ summaries: [...s.summaries, created] }));
+    set((s) => {
+      const wasEmpty = s.summaries.length === 0;
+      if (wasEmpty && s.activeVersionId) {
+        API.versions.put(s.activeVersionId, { selectedSummaryId: created.id });
+        return {
+          summaries: [...s.summaries, created],
+          cvVersions: s.cvVersions.map((v) =>
+            v.id === s.activeVersionId ? { ...v, selectedSummaryId: created.id } : v
+          ),
+        };
+      }
+      return { summaries: [...s.summaries, created] };
+    });
     return created;
   },
 

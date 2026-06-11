@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback, memo } from "react";
 import { useStore } from "@/store/useStore";
-import { AddSummaryModal } from "./Modals";
+import { AddSummaryModal, ConfirmDeleteModal } from "./Modals";
 
 export const ProfileEditor = memo(function ProfileEditor() {
   const profile = useStore((s) => s.profile);
@@ -25,6 +25,7 @@ export const ProfileEditor = memo(function ProfileEditor() {
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameName, setRenameName] = useState("");
   const [addSummaryModalOpen, setAddSummaryModalOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const isInitial = useRef(true);
 
   useEffect(() => {
@@ -98,11 +99,16 @@ export const ProfileEditor = memo(function ProfileEditor() {
     }
   };
 
-  const handleDeleteSummary = async (id: string) => {
-    if (confirm("Delete this About Me version?")) {
-      await deleteSummary(id);
-    }
+  const handleDeleteSummary = (id: string) => {
+    setDeleteTargetId(id);
   };
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (deleteTargetId) {
+      await deleteSummary(deleteTargetId);
+      setDeleteTargetId(null);
+    }
+  }, [deleteTargetId, deleteSummary]);
 
   const handleSelectSummary = async (summaryId: string) => {
     if (activeVersionId) {
@@ -123,19 +129,19 @@ export const ProfileEditor = memo(function ProfileEditor() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Name</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.name} onChange={(e) => update("name", e.target.value)} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="John Doe" value={form.name} onChange={(e) => update("name", e.target.value)} />
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Phone</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.phone} onChange={(e) => update("phone", e.target.value)} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="+1 (555) 123-4567" value={form.phone} onChange={(e) => update("phone", e.target.value)} />
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Email</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.email} onChange={(e) => update("email", e.target.value)} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="john@example.com" value={form.email} onChange={(e) => update("email", e.target.value)} />
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Location</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.location} onChange={(e) => update("location", e.target.value)} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="New York, NY" value={form.location} onChange={(e) => update("location", e.target.value)} />
           </div>
         </div>
       </div>
@@ -239,6 +245,14 @@ export const ProfileEditor = memo(function ProfileEditor() {
       <AddSummaryModal
         isOpen={addSummaryModalOpen}
         onClose={() => setAddSummaryModalOpen(false)}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={deleteTargetId !== null}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete About Me Version"
+        message="This About Me version will be permanently deleted."
       />
     </div>
   );

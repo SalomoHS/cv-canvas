@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Modal } from "./Modal";
 import { useStore } from "@/store/useStore";
 
@@ -412,6 +412,83 @@ interface DeleteVersionModalProps {
   onClose: () => void;
   versionId?: string;
   versionName?: string;
+}
+
+interface ConfirmDeleteModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => Promise<void>;
+  title: string;
+  message: string;
+}
+
+export function ConfirmDeleteModal({ isOpen, onClose, onConfirm, title, message }: ConfirmDeleteModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleConfirm = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      await onConfirm();
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onConfirm, onClose]);
+
+  const handleClose = useCallback(() => {
+    if (!isLoading) onClose();
+  }, [isLoading, onClose]);
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={title}
+    >
+      <div className="space-y-4">
+        <div className="flex items-start gap-3 p-3 bg-danger-light rounded-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-danger shrink-0 mt-0.5">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <div>
+            <p className="text-sm font-medium text-danger">This action cannot be undone.</p>
+            <p className="text-xs text-text-secondary mt-1">{message}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="modal-footer">
+        <button onClick={handleClose} disabled={isLoading} className="modal-btn-secondary">
+          Cancel
+        </button>
+        <button
+          onClick={handleConfirm}
+          disabled={isLoading}
+          className="modal-btn-danger"
+        >
+          {isLoading ? (
+            <>
+              <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" strokeOpacity="0.25"/>
+                <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/>
+              </svg>
+              Deleting...
+            </>
+          ) : (
+            <>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+              Delete
+            </>
+          )}
+        </button>
+      </div>
+    </Modal>
+  );
 }
 
 export function DeleteVersionModal({ isOpen, onClose, versionId, versionName }: DeleteVersionModalProps) {

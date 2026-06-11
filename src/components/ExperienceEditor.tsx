@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useMemo, memo, useCallback } from "react";
 import { useStore } from "@/store/useStore";
 import type { ExperienceSubType } from "@/lib/types";
+import { ConfirmDeleteModal } from "./Modals";
 
 export const ExperienceEditor = memo(function ExperienceEditor() {
   const entries = useStore((s) => s.entries);
@@ -23,6 +24,7 @@ export const ExperienceEditor = memo(function ExperienceEditor() {
   }), [expEntries]);
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [subType, setSubType] = useState<ExperienceSubType>("professional");
   const [form, setForm] = useState({
     role: "",
@@ -80,9 +82,16 @@ export const ExperienceEditor = memo(function ExperienceEditor() {
     }
   };
 
-  const remove = async (id: string) => {
-    if (confirm("Delete this experience entry?")) await deleteEntry(id);
+  const remove = (id: string) => {
+    setDeleteTargetId(id);
   };
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (deleteTargetId) {
+      await deleteEntry(deleteTargetId);
+      setDeleteTargetId(null);
+    }
+  }, [deleteTargetId, deleteEntry]);
 
   return (
     <div className="p-6 max-w-2xl space-y-6 animate-fade-in" onClick={() => setSelectedEntryId(null)}>
@@ -102,15 +111,15 @@ export const ExperienceEditor = memo(function ExperienceEditor() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Role</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="Software Engineer" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Organization</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.organization} onChange={(e) => setForm({ ...form, organization: e.target.value })} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="Acme Corp" value={form.organization} onChange={(e) => setForm({ ...form, organization: e.target.value })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Location</label>
-            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
+            <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="San Francisco, CA" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
           </div>
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Period</label>
@@ -121,7 +130,7 @@ export const ExperienceEditor = memo(function ExperienceEditor() {
           <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Bullets</label>
           {form.bullets.map((b, i) => (
             <div key={i} className="flex gap-2 mb-1.5">
-              <input className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" value={b} onChange={(e) => {
+              <input className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="Led a team of 5 engineers..." value={b} onChange={(e) => {
                 const copy = [...form.bullets];
                 copy[i] = e.target.value;
                 setForm({ ...form, bullets: copy });
@@ -179,6 +188,14 @@ export const ExperienceEditor = memo(function ExperienceEditor() {
           </div>
         </div>
       ))}
+
+      <ConfirmDeleteModal
+        isOpen={deleteTargetId !== null}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Experience Entry"
+        message="This experience entry will be permanently deleted."
+      />
     </div>
   );
 });
