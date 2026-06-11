@@ -182,7 +182,15 @@ export const ProfileEditor = memo(function ProfileEditor() {
             <p className="text-sm text-text-muted">No About Me versions yet.</p>
           ) : (
             summaries.map((summary) => (
-              <div key={summary.id} className="border border-border rounded-lg p-4 bg-surface-alt/50">
+              <div
+                key={summary.id}
+                onClick={() => handleSelectSummary(summary.id)}
+                className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+                  selectedSummaryId === summary.id
+                    ? "border-accent bg-accent-light/30"
+                    : "border-border bg-surface-alt/50 hover:border-accent/50 hover:bg-accent-light/10"
+                }`}
+              >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <input
@@ -190,13 +198,14 @@ export const ProfileEditor = memo(function ProfileEditor() {
                       name="selectedSummary"
                       checked={selectedSummaryId === summary.id}
                       onChange={() => handleSelectSummary(summary.id)}
+                      onClick={(e) => e.stopPropagation()}
                       className="accent-accent w-3.5 h-3.5"
                     />
                     <span className="text-xs font-medium text-text-primary">
                       {summary.name || "Untitled"}
                     </span>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                     <button onClick={() => handleStartRename(summary.id, summary.name || "")} className="btn-ghost text-xs">Rename</button>
                     <button onClick={() => handleEditSummary(summary.id, summary.content)} className="btn-ghost text-xs">Edit</button>
                     <button onClick={() => handleDeleteSummary(summary.id)} className="btn-danger text-xs">Delete</button>
