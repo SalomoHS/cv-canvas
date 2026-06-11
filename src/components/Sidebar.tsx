@@ -26,11 +26,13 @@ export function Sidebar({
   const setActiveVersion = useStore((s) => s.setActiveVersion);
   const addVersion = useStore((s) => s.addVersion);
   const deleteVersion = useStore((s) => s.deleteVersion);
+  const renameVersion = useStore((s) => s.renameVersion);
   const addCrate = useStore((s) => s.addCrate);
   const deleteCrate = useStore((s) => s.deleteCrate);
   const renameCrate = useStore((s) => s.renameCrate);
   const [expandedCrates, setExpandedCrates] = useState<Set<string>>(new Set(crates.map((c) => c.id)));
   const [renamingCrateId, setRenamingCrateId] = useState<string | null>(null);
+  const [renamingVersionId, setRenamingVersionId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
 
   const toggleCrate = (id: string) => {
@@ -48,23 +50,27 @@ export function Sidebar({
       {/* Brand */}
       <div className="px-5 pt-5 pb-4 border-b border-border-light">
         <h1 className="font-medium tracking-tight text-text-primary" style={{ fontFamily: "var(--font-family-display)", fontSize: "1.25rem" }}>
-          CV Manager
+          CV CANVAS
         </h1>
-        <p className="text-xs text-text-muted mt-0.5">Separate content from presentation</p>
+        <p className="text-xs text-text-muted mt-0.5">Manage your curriculum vitae</p>
       </div>
 
       {/* Version tree */}
       <div className="flex-1 overflow-y-auto px-3 py-3">
         {/* New Folder */}
         <button
-          onClick={() => {
-            const name = prompt("Folder name:");
-            if (name) addCrate(name);
+          onClick={async () => {
+            const name = prompt("Curriculum Vitae name:");
+            if (name) {
+              const crate = await addCrate(name);
+              setExpandedCrates((prev) => new Set([...prev, crate.id]));
+              await addVersion("Version 0", crate.id);
+            }
           }}
           className="btn-ghost w-full justify-start mb-1 text-xs"
         >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-          New Folder
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Curriculum Vitae
         </button>
 
         <div className="space-y-0.5">
@@ -74,9 +80,12 @@ export function Sidebar({
 
             return (
               <div key={crate.id}>
-                <div className="group flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-surface-alt transition-colors">
+                <div className="group flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-surface-alt transition-colors cursor-pointer" onClick={() => toggleCrate(crate.id)}>
                   <button
-                    onClick={() => toggleCrate(crate.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleCrate(crate.id);
+                    }}
                     className="text-text-muted hover:text-text-secondary transition-colors"
                   >
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -117,7 +126,7 @@ export function Sidebar({
                     </button>
                     <button
                       onClick={() => {
-                        if (confirm(`Delete folder "${crate.name}" and uncategorize its versions?`)) deleteCrate(crate.id);
+                        if (confirm(`Delete Curriculum Vitae "${crate.name}" and uncategorize its versions?`)) deleteCrate(crate.id);
                       }}
                       className="text-text-muted hover:text-danger p-0.5 rounded"
                     >
@@ -127,37 +136,73 @@ export function Sidebar({
                 </div>
 
                 {expanded && (
-                  <div className="ml-4 border-l border-border-light pl-2 mt-0.5 space-y-0.5">
-                    {crateVersions.map((v) => (
-                      <button
-                        key={v.id}
-                        onClick={() => setActiveVersion(v.id)}
-                        className={`version-item ${activeVersionId === v.id ? "active" : ""}`}
-                      >
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className={activeVersionId === v.id ? "text-accent" : "text-text-muted"}><circle cx="12" cy="12" r="6"/></svg>
-                        <span className="flex-1 truncate">{v.name}</span>
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (confirm(`Delete version "${v.name}"?`)) deleteVersion(v.id);
-                          }}
-                          className="text-text-muted hover:text-danger p-0.5 rounded opacity-0 group-hover/ver:opacity-100 cursor-pointer"
-                        >
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                        </span>
-                      </button>
-                    ))}
+                  <>
+                    <div className="ml-4 border-l border-border-light pl-2 mt-0.5 space-y-0.5">
+                      {crateVersions.map((v) => (
+                        <div key={v.id} className="group/ver">
+                          <button
+                            onClick={() => setActiveVersion(v.id)}
+                            className={`version-item ${activeVersionId === v.id ? "active" : ""}`}
+                          >
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className={activeVersionId === v.id ? "text-accent" : "text-text-muted"}><circle cx="12" cy="12" r="6"/></svg>
+                            {renamingVersionId === v.id ? (
+                              <input
+                                autoFocus
+                                className="flex-1 bg-white border border-accent rounded px-1 py-0.5 text-xs outline-none"
+                                value={renameValue}
+                                onChange={(e) => setRenameValue(e.target.value)}
+                                onBlur={() => {
+                                  if (renameValue.trim()) renameVersion(v.id, renameValue.trim());
+                                  setRenamingVersionId(null);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    if (renameValue.trim()) renameVersion(v.id, renameValue.trim());
+                                    setRenamingVersionId(null);
+                                  }
+                                  if (e.key === "Escape") setRenamingVersionId(null);
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              />
+                            ) : (
+                              <span className="flex-1 truncate">{v.name}</span>
+                            )}
+                            <div className="hidden group-hover/ver:flex items-center gap-0.5">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setRenamingVersionId(v.id);
+                                  setRenameValue(v.name);
+                                }}
+                                className="text-text-muted hover:text-text-primary p-0.5 rounded"
+                              >
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (confirm(`Delete version "${v.name}"?`)) deleteVersion(v.id);
+                                }}
+                                className="text-text-muted hover:text-danger p-0.5 rounded"
+                              >
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                              </button>
+                            </div>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                     <button
                       onClick={() => {
                         const name = prompt("Version name:");
                         if (name) addVersion(name, crate.id);
                       }}
-                      className="version-item text-text-muted hover:text-text-secondary"
+                      className="ml-4 pl-2 pr-2 py-1 text-xs text-text-muted hover:text-text-secondary flex items-center gap-1.5 transition-colors"
                     >
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                       <span>New Version</span>
                     </button>
-                  </div>
+                  </>
                 )}
               </div>
             );
@@ -177,33 +222,55 @@ export function Sidebar({
                       className={`version-item ${activeVersionId === v.id ? "active" : ""}`}
                     >
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className={activeVersionId === v.id ? "text-accent" : "text-text-muted"}><circle cx="12" cy="12" r="6"/></svg>
-                      <span className="flex-1 truncate">{v.name}</span>
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (confirm(`Delete version "${v.name}"?`)) deleteVersion(v.id);
-                        }}
-                        className="text-text-muted hover:text-danger p-0.5 rounded cursor-pointer"
-                      >
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                      </span>
+                      {renamingVersionId === v.id ? (
+                        <input
+                          autoFocus
+                          className="flex-1 bg-white border border-accent rounded px-1 py-0.5 text-xs outline-none"
+                          value={renameValue}
+                          onChange={(e) => setRenameValue(e.target.value)}
+                          onBlur={() => {
+                            if (renameValue.trim()) renameVersion(v.id, renameValue.trim());
+                            setRenamingVersionId(null);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              if (renameValue.trim()) renameVersion(v.id, renameValue.trim());
+                              setRenamingVersionId(null);
+                            }
+                            if (e.key === "Escape") setRenamingVersionId(null);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : (
+                        <span className="flex-1 truncate">{v.name}</span>
+                      )}
+                      <div className="hidden group-hover/ver:flex items-center gap-0.5">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRenamingVersionId(v.id);
+                            setRenameValue(v.name);
+                          }}
+                          className="text-text-muted hover:text-text-primary p-0.5 rounded"
+                        >
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm(`Delete version "${v.name}"?`)) deleteVersion(v.id);
+                          }}
+                          className="text-text-muted hover:text-danger p-0.5 rounded"
+                        >
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                      </div>
                     </button>
                   </div>
                 ))}
               </div>
             </div>
           )}
-
-          <button
-            onClick={() => {
-              const name = prompt("Version name:");
-              if (name) addVersion(name);
-            }}
-            className="btn-ghost w-full justify-start text-xs"
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New Version
-          </button>
         </div>
       </div>
 

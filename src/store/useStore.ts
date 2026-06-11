@@ -63,6 +63,7 @@ interface StoreState {
   addCrate: (name: string) => Promise<Crate>;
   deleteCrate: (id: string) => Promise<void>;
   renameCrate: (id: string, name: string) => Promise<void>;
+  renameVersion: (id: string, name: string) => Promise<void>;
   addSummary: (name: string, content: string) => Promise<Summary>;
   updateSummary: (id: string, data: Partial<Summary>) => Promise<void>;
   deleteSummary: (id: string) => Promise<void>;
@@ -238,16 +239,24 @@ export const useStore = create<StoreState>((set, get) => ({
   },
 
   deleteCrate: async (id) => {
+    const versionsToDelete = get().cvVersions.filter((v) => v.crateId === id);
+    await Promise.all(versionsToDelete.map((v) => API.versions.delete(v.id)));
     await API.crates.delete(id);
     set((s) => ({
       crates: s.crates.filter((c) => c.id !== id),
-      cvVersions: s.cvVersions.map((v) => (v.crateId === id ? { ...v, crateId: null } : v)),
+      cvVersions: s.cvVersions.filter((v) => v.crateId !== id),
+      activeVersionId: versionsToDelete.some((v) => v.id === s.activeVersionId) ? (s.cvVersions.find((v) => v.crateId !== id)?.id ?? null) : s.activeVersionId,
     }));
   },
 
   renameCrate: async (id, name) => {
     const updated = await API.crates.put(id, { name });
     set((s) => ({ crates: s.crates.map((c) => (c.id === id ? { ...c, ...updated } : c)) }));
+  },
+
+  renameVersion: async (id, name) => {
+    const updated = await API.versions.put(id, { name });
+    set((s) => ({ cvVersions: s.cvVersions.map((v) => (v.id === id ? { ...v, ...updated } : v)) }));
   },
 
   setSelectedEntryId: (id) => set({ selectedEntryId: id }),

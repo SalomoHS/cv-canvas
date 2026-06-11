@@ -64,6 +64,13 @@ export function CVPreview() {
   const previewRef = useRef<HTMLDivElement>(null);
   const [dragOverlay, setDragOverlay] = useState<{ visible: boolean; x: number; y: number }>({ visible: false, x: 0, y: 0 });
 
+  const selectedSummary = useMemo(
+    () => maybeVersion?.selectedSummaryId
+      ? summaries.find((s) => s.id === maybeVersion.selectedSummaryId)
+      : summaries.find((s) => s.isDefault) ?? summaries[0],
+    [maybeVersion?.selectedSummaryId, summaries]
+  );
+
   useEffect(() => {
     setDragOverEntryId(null);
   }, [activeVersionId]);
@@ -89,30 +96,16 @@ export function CVPreview() {
     };
   }, [handleDragOver, handleDragEnd]);
 
-  if (!profile || !maybeVersion) {
-    return (
-      <div className="p-8 text-sm text-text-muted">
-        {!profile ? "Loading profile..." : "No CV version selected. Create one from the sidebar."}
-      </div>
-    );
-  }
-  const version = maybeVersion;
-  const selectedSummary = useMemo(
-    () => version.selectedSummaryId
-      ? summaries.find((s) => s.id === version.selectedSummaryId)
-      : summaries.find((s) => s.isDefault) ?? summaries[0],
-    [version.selectedSummaryId, summaries]
-  );
-
   const validLinks = useMemo(
-    () => profile.links.filter((l) => l.label && l.url),
-    [profile.links]
+    () => profile?.links.filter((l) => l.label && l.url) ?? [],
+    [profile?.links]
   );
 
-  const eduOrder = version.sectionOrder.education;
-  const expOrder = version.sectionOrder.experience;
-  const projOrder = version.sectionOrder.project;
-  const skillOrder = version.skillOrder;
+  const version = maybeVersion;
+  const eduOrder = version?.sectionOrder.education;
+  const expOrder = version?.sectionOrder.experience;
+  const projOrder = version?.sectionOrder.project;
+  const skillOrder = version?.skillOrder;
 
   const eduEntries = useMemo(
     () => eduOrder !== undefined
@@ -148,6 +141,14 @@ export function CVPreview() {
       : entries.filter((e) => e.section === "skill"),
     [entries, skillOrder]
   );
+
+  if (!profile || !version) {
+    return (
+      <div className="p-8 text-sm text-text-muted">
+        {!profile ? "Loading profile..." : "No CV version selected. Create one from the sidebar."}
+      </div>
+    );
+  }
 
   function canDrop(e: React.DragEvent) {
     return e.dataTransfer.types.includes("application/x-cv-add-entry-id") ||
