@@ -276,8 +276,8 @@ export const useStore = create<StoreState>((set, get) => ({
     await get().updateVersion(version.id, { skillOrder: entryIds });
   },
 
-  addSummary: async (content) => {
-    const created = await API.summaries.post({ content, isDefault: false });
+  addSummary: async (name, content) => {
+    const created = await API.summaries.post({ name, content, isDefault: false });
     set((s) => ({ summaries: [...s.summaries, created] }));
     return created;
   },

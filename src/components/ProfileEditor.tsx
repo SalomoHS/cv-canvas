@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback, memo } from "react";
 import { useStore } from "@/store/useStore";
+import { AddSummaryModal } from "./Modals";
 
 export const ProfileEditor = memo(function ProfileEditor() {
   const profile = useStore((s) => s.profile);
   const setProfile = useStore((s) => s.setProfile);
   const summaries = useStore((s) => s.summaries);
-  const addSummary = useStore((s) => s.addSummary);
   const updateSummary = useStore((s) => s.updateSummary);
   const deleteSummary = useStore((s) => s.deleteSummary);
   const cvVersions = useStore((s) => s.cvVersions);
@@ -24,6 +24,7 @@ export const ProfileEditor = memo(function ProfileEditor() {
   const [editContent, setEditContent] = useState("");
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameName, setRenameName] = useState("");
+  const [addSummaryModalOpen, setAddSummaryModalOpen] = useState(false);
   const isInitial = useRef(true);
 
   useEffect(() => {
@@ -67,9 +68,8 @@ export const ProfileEditor = memo(function ProfileEditor() {
     update("links", form.links.filter((_, idx) => idx !== i));
   };
 
-  const handleAddSummary = async () => {
-    const name = prompt("Version name:") || "Untitled";
-    await addSummary(name, "New About Me version...");
+  const handleAddSummary = () => {
+    setAddSummaryModalOpen(true);
   };
 
   const handleEditSummary = (id: string, content: string) => {
@@ -226,6 +226,11 @@ export const ProfileEditor = memo(function ProfileEditor() {
           )}
         </div>
       </div>
+
+      <AddSummaryModal
+        isOpen={addSummaryModalOpen}
+        onClose={() => setAddSummaryModalOpen(false)}
+      />
     </div>
   );
 });

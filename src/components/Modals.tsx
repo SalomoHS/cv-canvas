@@ -189,6 +189,113 @@ export function AddVersionModal({ isOpen, onClose, crateId }: AddVersionModalPro
   );
 }
 
+interface AddSummaryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function AddSummaryModal({ isOpen, onClose }: AddSummaryModalProps) {
+  const [name, setName] = useState("");
+  const [content, setContent] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { addSummary } = useStore();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+
+    setIsLoading(true);
+    try {
+      await addSummary(name.trim(), content.trim() || "New About Me version...");
+      setName("");
+      setContent("");
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setName("");
+    setContent("");
+    onClose();
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="New About Me Version"
+      footer={
+        <>
+          <button onClick={handleClose} className="modal-btn-secondary">
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={!name.trim() || isLoading}
+            className="modal-btn-primary"
+          >
+            {isLoading ? (
+              <>
+                <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" strokeOpacity="0.25"/>
+                  <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"/>
+                </svg>
+                Creating...
+              </>
+            ) : (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Create Version
+              </>
+            )}
+          </button>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="summary-name" className="modal-label">
+            Version Name
+          </label>
+          <input
+            id="summary-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g., Version 1"
+            className="modal-input"
+            autoFocus
+          />
+          <p className="modal-hint">
+            Name your About Me version to track different drafts.
+          </p>
+        </div>
+        <div>
+          <label htmlFor="summary-content" className="modal-label">
+            Content <span className="text-text-muted font-normal">(optional)</span>
+          </label>
+          <textarea
+            id="summary-content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Write your About Me content here..."
+            className="modal-input min-h-[100px] resize-y"
+            rows={4}
+          />
+          <p className="modal-hint">
+            Your professional summary or bio. You can always edit this later.
+          </p>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
 interface DeleteCVModalProps {
   isOpen: boolean;
   onClose: () => void;
