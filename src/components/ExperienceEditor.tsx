@@ -33,7 +33,11 @@ export const ExperienceEditor = memo(function ExperienceEditor() {
   });
 
   useEffect(() => {
-    if (!selectedEntryId) return;
+    if (!selectedEntryId) {
+      setEditingId(null);
+      setForm({ role: "", organization: "", location: "", period: "", bullets: [""] });
+      return;
+    }
     const entry = expEntries.find((e) => e.id === selectedEntryId);
     if (entry) openEdit(entry);
   }, [selectedEntryId]);
@@ -81,10 +85,10 @@ export const ExperienceEditor = memo(function ExperienceEditor() {
   };
 
   return (
-    <div className="p-6 max-w-2xl space-y-6 animate-fade-in">
+    <div className="p-6 max-w-2xl space-y-6 animate-fade-in" onClick={() => setSelectedEntryId(null)}>
       <h2 className="text-lg font-semibold tracking-tight text-text-primary">Experience</h2>
 
-      <div className="card p-5 space-y-4">
+      <div className="card p-5 space-y-4" onClick={(e) => e.stopPropagation()}>
         <div className="flex gap-4 mb-1">
           <label className="flex items-center gap-1.5 text-sm cursor-pointer">
             <input type="radio" name="subtype" checked={subType === "professional"} onChange={() => setSubType("professional")} className="accent-accent w-3.5 h-3.5" />
@@ -156,7 +160,7 @@ export const ExperienceEditor = memo(function ExperienceEditor() {
                   key={entry.id}
                   draggable
                   onDragStart={(e) => { e.dataTransfer.setData("application/x-cv-add-entry-id", entry.id); e.dataTransfer.effectAllowed = "move"; }}
-                  onClick={() => setSelectedEntryId(entry.id)}
+                  onClick={(e) => { e.stopPropagation(); setSelectedEntryId(entry.id); }}
                   className={`entry-card ${isSelected ? "selected" : ""}`}
                 >
                   <div className="flex justify-between items-start">

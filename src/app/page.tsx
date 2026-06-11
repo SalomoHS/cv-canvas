@@ -12,6 +12,7 @@ import { useStore } from "@/store/useStore";
 
 export default function Home() {
   const { init, loading, activeTab, setActiveTab } = useStore();
+  const setSelectedEntryId = useStore((s) => s.setSelectedEntryId);
 
   useEffect(() => {
     init();
@@ -43,7 +44,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex w-full h-screen overflow-x-hidden bg-surface">
+    <div className="flex w-full h-screen overflow-x-hidden bg-surface" onClick={() => setSelectedEntryId(null)}>
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       {activeTab !== "preview" && (
         <main className="flex-1 overflow-y-auto">

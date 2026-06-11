@@ -297,7 +297,7 @@ export function CVPreview() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6" onClick={() => setSelectedEntryId(null)}>
       <EditToolbar />
       <div
         ref={previewRef}
@@ -685,7 +685,7 @@ const EntryRow = memo(function EntryRow({
         {makeDragHandle(entry.id, sectionType)}
         <div
           style={{ flex: 1, minWidth: 0, cursor: "text" }}
-          onClick={() => onEntryClick(entry.id)}
+          onClick={(e) => { e.stopPropagation(); onEntryClick(entry.id); }}
         >
           {entry.content}
           {entry.extra}

@@ -28,6 +28,7 @@ export function Sidebar({
   activeTab: Tab;
   onTabChange: (tab: Tab) => void;
 }) {
+  const setSelectedEntryId = useStore((s) => s.setSelectedEntryId);
   const cvVersions = useStore((s) => s.cvVersions);
   const crates = useStore((s) => s.crates);
   const activeVersionId = useStore((s) => s.activeVersionId);
@@ -114,7 +115,7 @@ export function Sidebar({
   });
 
   return (
-    <aside className="w-64 bg-surface-raised border-r border-border flex flex-col h-screen sticky top-0" style={{ fontFamily: "var(--font-family-body)" }}>
+    <aside className="w-64 bg-surface-raised border-r border-border flex flex-col h-screen sticky top-0" style={{ fontFamily: "var(--font-family-body)" }} onClick={() => setSelectedEntryId(null)}>
       {/* Brand */}
       <div className="px-5 pt-5 pb-4 border-b border-border-light">
         <h1 className="font-medium tracking-tight text-text-primary" style={{ fontFamily: "var(--font-family-display)", fontSize: "1.25rem" }}>
@@ -154,7 +155,9 @@ export function Sidebar({
           </svg>
           <button
             type="button"
-            onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+            onClick={() => {
+              setSortDropdownOpen(!sortDropdownOpen);
+            }}
             className="w-full appearance-none bg-surface border border-border-light rounded-lg pl-7 pr-7 py-1.5 text-xs text-text-primary cursor-pointer transition-all duration-150 focus:outline-none focus:border-accent focus:shadow-[0_0_0_2px_#eef4fa] text-left flex items-center justify-between"
           >
             <span>{sortOptions.find(o => o.value === sortOrder)?.label}</span>

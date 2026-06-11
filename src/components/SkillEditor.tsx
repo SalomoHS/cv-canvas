@@ -20,7 +20,11 @@ export const SkillEditor = memo(function SkillEditor() {
   const [form, setForm] = useState({ category: "", items: [""] });
 
   useEffect(() => {
-    if (!selectedEntryId) return;
+    if (!selectedEntryId) {
+      setEditingId(null);
+      setForm({ category: "", items: [""] });
+      return;
+    }
     const entry = skillEntries.find((e) => e.id === selectedEntryId);
     if (entry) openEdit(entry);
   }, [selectedEntryId]);
@@ -54,10 +58,10 @@ export const SkillEditor = memo(function SkillEditor() {
   };
 
   return (
-    <div className="p-6 max-w-2xl space-y-6 animate-fade-in">
+    <div className="p-6 max-w-2xl space-y-6 animate-fade-in" onClick={() => setSelectedEntryId(null)}>
       <h2 className="text-lg font-semibold tracking-tight text-text-primary">Skills</h2>
 
-      <div className="card p-5 space-y-4">
+      <div className="card p-5 space-y-4" onClick={(e) => e.stopPropagation()}>
         <div>
           <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Category</label>
           <input className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-surface-raised" placeholder="e.g. Technical Skills" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
@@ -101,7 +105,7 @@ export const SkillEditor = memo(function SkillEditor() {
               key={entry.id}
               draggable
               onDragStart={(e) => { e.dataTransfer.setData("application/x-cv-add-entry-id", entry.id); e.dataTransfer.effectAllowed = "move"; }}
-              onClick={() => setSelectedEntryId(entry.id)}
+              onClick={(e) => { e.stopPropagation(); setSelectedEntryId(entry.id); }}
               className={`entry-card ${isSelected ? "selected" : ""}`}
             >
               <div className="flex justify-between items-start">

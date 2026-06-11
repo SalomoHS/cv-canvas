@@ -25,7 +25,11 @@ export const ProjectEditor = memo(function ProjectEditor() {
   });
 
   useEffect(() => {
-    if (!selectedEntryId) return;
+    if (!selectedEntryId) {
+      setEditingId(null);
+      setForm({ name: "", link: "", year: "", bullets: [""] });
+      return;
+    }
     const entry = projEntries.find((e) => e.id === selectedEntryId);
     if (entry) openEdit(entry);
   }, [selectedEntryId]);
@@ -69,10 +73,10 @@ export const ProjectEditor = memo(function ProjectEditor() {
   };
 
   return (
-    <div className="p-6 max-w-2xl space-y-6 animate-fade-in">
+    <div className="p-6 max-w-2xl space-y-6 animate-fade-in" onClick={() => setSelectedEntryId(null)}>
       <h2 className="text-lg font-semibold tracking-tight text-text-primary">Projects</h2>
 
-      <div className="card p-5 space-y-4">
+      <div className="card p-5 space-y-4" onClick={(e) => e.stopPropagation()}>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1.5 tracking-wide uppercase">Project Name</label>
@@ -129,7 +133,7 @@ export const ProjectEditor = memo(function ProjectEditor() {
                 e.dataTransfer.setData("application/x-cv-add-entry-id", entry.id);
                 e.dataTransfer.effectAllowed = "move";
               }}
-              onClick={() => setSelectedEntryId(entry.id)}
+              onClick={(e) => { e.stopPropagation(); setSelectedEntryId(entry.id); }}
               className={`entry-card ${isSelected ? "selected" : ""}`}
             >
               <div className="flex justify-between items-start">
