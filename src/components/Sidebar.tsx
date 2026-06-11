@@ -233,7 +233,7 @@ export function Sidebar({
                         const name = prompt("Version name:");
                         if (name) addVersion(name, crate.id);
                       }}
-                      className="ml-4 pl-2 pr-2 py-1 text-xs text-text-muted hover:text-text-secondary flex items-center gap-1.5 transition-colors"
+                      className="ml-4 pl-2 pr-2 py-1 text-xs text-text-muted hover:text-text-secondary flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                       <span>New Version</span>

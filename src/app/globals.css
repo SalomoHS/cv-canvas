@@ -165,6 +165,7 @@ select:focus {
 .sidebar-link:hover {
   background: var(--color-surface-alt);
   color: var(--color-text-primary);
+  cursor: pointer;
 }
 
 .sidebar-link.active {
