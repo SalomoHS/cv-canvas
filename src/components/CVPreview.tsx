@@ -387,7 +387,7 @@ export function CVPreview() {
                 return (
                   <div style={{ display: "flex", justifyContent: "flex-start" }}>
                     <span style={{ fontWeight: "bold" }}>{d.role}, {d.organization}{d.location ? ` | ${d.location}` : ""}</span>
-                    <span style={{ fontWeight: "bold", fontStyle: "italic", marginLeft: "auto" }}>{d.period}</span>
+                    <span style={{ fontStyle: "italic", marginLeft: "auto" }}>{d.period}</span>
                   </div>
                 );
               })(),
@@ -421,7 +421,7 @@ export function CVPreview() {
                 return (
                   <div style={{ display: "flex", justifyContent: "flex-start" }}>
                     <span style={{ fontWeight: "bold" }}>{d.role}, {d.organization}{d.location ? ` | ${d.location}` : ""}</span>
-                    <span style={{ fontWeight: "bold", fontStyle: "italic", marginLeft: "auto" }}>{d.period}</span>
+                    <span style={{ fontStyle: "italic", marginLeft: "auto" }}>{d.period}</span>
                   </div>
                 );
               })(),
@@ -459,7 +459,7 @@ export function CVPreview() {
                       {d.link && <span> {"\u2013"} <a href={d.link} target="_blank" rel="noopener noreferrer" style={{ color: "blue", textDecoration: "underline" }}>View Project</a></span>}
                     </span>
                     <span style={{ display: "flex", alignItems: "center", gap: "4pt", marginLeft: "auto" }}>
-                      <span>{d.year}</span>
+                      <span style={{ fontStyle: "italic" }}>{d.year}</span>
                     </span>
                   </div>
                 );

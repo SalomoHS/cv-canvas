@@ -270,7 +270,7 @@ function ProjectsSection({ data }: { data: PDFCVData }) {
                   ) : null}
                 </Text>
               </View>
-              <Text style={styles.period}>{d.year}</Text>
+              <Text style={[styles.period, styles.periodItalic]}>{d.year}</Text>
             </View>
             {d.bullets && renderBullets(d.bullets)}
           </View>

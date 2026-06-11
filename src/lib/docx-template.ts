@@ -185,7 +185,7 @@ function buildProject(entry: CVData["entries"][0]): Paragraph[] {
     );
   }
   const result: Paragraph[] = [
-    twoColLine(leftChildren, new TextRun({ text: d.year, size: BASE_SIZE, font: FONT })),
+    twoColLine(leftChildren, new TextRun({ text: d.year, size: BASE_SIZE, font: FONT, italics: true })),
   ];
   for (const b of d.bullets || []) {
     result.push(bulletLine([new TextRun({ text: b, size: BASE_SIZE, font: FONT })]));
