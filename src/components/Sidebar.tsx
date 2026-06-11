@@ -13,6 +13,13 @@ const tabs: { id: Tab; label: string; icon: string }[] = [
   { id: "preview", label: "Preview", icon: "M12 4v16m-8-8h16" },
 ];
 
+const sortOptions: { value: "newest" | "oldest" | "az" | "za"; label: string }[] = [
+  { value: "newest", label: "Newest" },
+  { value: "oldest", label: "Oldest" },
+  { value: "az", label: "A-Z" },
+  { value: "za", label: "Z-A" },
+];
+
 export function Sidebar({
   activeTab,
   onTabChange,
@@ -35,6 +42,8 @@ export function Sidebar({
   const [renamingVersionId, setRenamingVersionId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest" | "az" | "za">("newest");
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
 
   const toggleCrate = (id: string) => {
     setExpandedCrates((prev) => {
@@ -52,6 +61,17 @@ export function Sidebar({
     const crateVersions = cvVersions.filter((v) => v.crateId === crate.id);
     if (crate.name.toLowerCase().includes(query)) return true;
     return crateVersions.some((v) => v.name.toLowerCase().includes(query));
+  }).sort((a, b) => {
+    switch (sortOrder) {
+      case "newest":
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case "oldest":
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      case "az":
+        return a.name.localeCompare(b.name);
+      case "za":
+        return b.name.localeCompare(a.name);
+    }
   });
 
   const filteredUncategorizedVersions = uncategorizedVersions.filter((v) => {
@@ -93,6 +113,44 @@ export function Sidebar({
           )}
         </div>
 
+        {/* Sort */}
+        <div className="relative mb-2">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-2 top-1/2 -translate-y-1/2 text-text-muted z-10">
+            <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/>
+          </svg>
+          <button
+            type="button"
+            onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
+            className="w-full appearance-none bg-surface border border-border-light rounded-lg pl-7 pr-7 py-1.5 text-xs text-text-primary cursor-pointer transition-all duration-150 focus:outline-none focus:border-accent focus:shadow-[0_0_0_2px_#eef4fa] text-left flex items-center justify-between"
+          >
+            <span>{sortOptions.find(o => o.value === sortOrder)?.label}</span>
+          </button>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+          {sortDropdownOpen && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-surface-raised border border-border-light rounded-lg shadow-lg z-20 overflow-hidden animate-fade-in">
+              {sortOptions.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => {
+                    setSortOrder(option.value);
+                    setSortDropdownOpen(false);
+                  }}
+                  className={`w-full px-3 py-1.5 text-xs text-left cursor-pointer transition-colors ${
+                    sortOrder === option.value
+                      ? "bg-accent-light text-accent font-medium"
+                      : "text-text-primary hover:bg-surface-alt"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* New CV */}
         <button
           onClick={async () => {
@@ -110,12 +168,12 @@ export function Sidebar({
         </button>
 
         <div className="space-y-0.5">
-          {filteredCrates.map((crate) => {
+          {filteredCrates.map((crate, index) => {
             const crateVersions = cvVersions.filter((v) => v.crateId === crate.id);
             const expanded = expandedCrates.has(crate.id);
 
             return (
-              <div key={crate.id}>
+              <div key={crate.id} style={{ animationDelay: `${index * 30}ms` }} className="animate-stagger">
                 <div className="group flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-surface-alt transition-colors cursor-pointer" onClick={() => toggleCrate(crate.id)}>
                   <button
                     onClick={(e) => {
