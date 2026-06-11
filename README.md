@@ -1,5 +1,7 @@
 # CV Canvas — Curriculum Vitae Visual Authoring System
 
+<img width="3706" height="1968" alt="Screenshot 2026-06-12 031326" src="https://github.com/user-attachments/assets/1e4445b2-9c63-4084-b03b-f5bdeea093ae" />
+
 CV Canvas is a web-based CV/resume builder that lets you create, manage, and export professional CVs with real-time preview. Write once, reuse across multiple versions, and export to PDF or DOCX.
 
 ## Overview
