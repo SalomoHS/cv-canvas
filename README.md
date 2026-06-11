@@ -53,19 +53,29 @@ The PDF and DOCX export templates are designed to be **ATS-friendly**:
 This ensures your CV can be reliably parsed by applicant tracking systems while still looking polished for human readers.
 
 ## Install
-Clone the repository:
+- Clone the repository:
 
 ```bash
 git clone https://github.com/isalo/cv-canvas.git
 ```
 
-Navigate to the project directory:
+- Navigate to the project directory:
 
 ```bash
 cd cv-canvas
 ```
 
-Run the entire stack (app + PostgreSQL database) with Docker Compose.
+- Create `.env` file. Environment variables are configured in [`.env.docker`](file:///c:\Users\isalo\Documents\Projects\cvvas\.env.docker):
+
+```.env.docker
+DATABASE_URL=postgresql://postgres:postgres@db:5432/cvvas
+```
+
+```bash
+copy .env.docker .env.local
+```
+
+- Run the entire stack (app + PostgreSQL database) with Docker Compose.
 
 ```bash
 docker compose up -d --build
@@ -73,7 +83,7 @@ docker compose up -d --build
 
 The app will be available at [http://localhost:3000](http://localhost:3000)
 
-### Services
+## Services
 
 Docker Compose runs three services:
 
@@ -91,19 +101,7 @@ docker compose build migrate
 docker compose run migrate
 ```
 
-### Environment
-
-Environment variables are configured in [`.env.docker`](file:///c:\Users\isalo\Documents\Projects\cvvas\.env.docker):
-
-```.env.docker
-DATABASE_URL=postgresql://postgres:postgres@db:5432/cvvas
-```
-
-```bash
-copy .env.docker .env.local
-```
-
-### Resource Limits
+## Resource Limits
 
 The Docker Compose configuration is optimized for systems with 1 CPU and 2GB RAM:
 
