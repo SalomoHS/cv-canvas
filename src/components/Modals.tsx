@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Modal } from "./Modal";
 import { useStore } from "@/store/useStore";
 
@@ -14,6 +14,13 @@ export function AddCVModal({ isOpen, onClose, onCreated }: AddCVModalProps) {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { addCrate, addVersion, crates, setActiveTab } = useStore();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,13 +89,13 @@ export function AddCVModal({ isOpen, onClose, onCreated }: AddCVModalProps) {
             Name
           </label>
           <input
+            ref={inputRef}
             id="cv-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Software Engineer CV"
             className="modal-input"
-            autoFocus
           />
           <p className="modal-hint">
             Give your CV a descriptive name to identify it easily.
